@@ -45,6 +45,8 @@ namespace EasyCom
 
         public Page_ConnectionTab(ConnectionTabHelper connectionTabHelper)
         {
+            InitializeComponent();
+
             this.ConnectionTabHelper = connectionTabHelper;
             customStrManager = ((MainWindow)App.Current.MainWindow).CustomStrManager;
             dialogCustomStrBookmark = new PageCustomStrBookmarkDialog(customStrManager.CustomStrTabList);
@@ -54,7 +56,7 @@ namespace EasyCom
                 ListBox_CustomStr_Refresh();
             };
 
-            InitializeComponent();
+            
             this.ToolBarMinWidth = this.ToolBarColumn.MinWidth;
             //CommandListFilePath = ;
             Debug.WriteLine(CommandListFilePath);

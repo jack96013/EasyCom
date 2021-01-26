@@ -131,6 +131,9 @@
     </ApplicationDefinition>
     <Compile Include="Connection\ConnectionType.cs" />
     <Compile Include="Connection\IConnectionCommand.cs" />
+    <Compile Include="Connection\Serial\PageDialog.xaml.cs">
+      <DependentUpon>PageDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Connection\Serial\CommandHandle.cs" />
     <Compile Include="Connection\Serial\Options.cs" />
     <Compile Include="Connection\Serial\Settings.cs" />
@@ -149,6 +152,7 @@
     <Compile Include="CustomStr\TabItemModel.cs" />
     <Compile Include="General\IPopupDialog.cs" />
     <Compile Include="General\PopupDialog.cs" />
+    <Compile Include="General\PopupDialogHostMultiTab.cs" />
     <Compile Include="General\ViewModelBase.cs" />
     <Compile Include="General\ConsoleThread.cs" />
     <Compile Include="LibZResolver.cs" />
@@ -191,6 +195,10 @@
       <DependentUpon>Page_ToolSideBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Connection\Serial\SerialDeviceNotification.cs" />
+    <Page Include="Connection\Serial\PageDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="CustomStr\PageCustomStrBookmarkDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

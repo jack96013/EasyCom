@@ -5,7 +5,7 @@ namespace EasyCom.General
 {
     public class PopupDialog
     {
-        public PopupDialogHost PopUpDialogHost {get;set;} = null;
+        public PopupDialogHost PopUpDialogHost { get; set; } = null;
         public double OpacityPercent { get; set; } = 0.25;
         public bool AllowClickMaskToClose { get; set; } = true;
 
@@ -18,11 +18,18 @@ namespace EasyCom.General
         public object OnCancelArg { get; set; } = null;
         public Action<object, object> OnConfirm { get; set; } = null;
         public object OnConfirmArg { get; set; } = null;
-        
+
         public bool ScaleAnimationEnable { get; set; } = true;
 
         public int ScaleAnimationSpeed { get; set; } = 100;
         public IPopupDialog Page { get; set; }
+
+        public enum Status {
+            Show,
+            Close
+        }
+
+        public Status WindowStatus { get; set; } = Status.Close;
 
         public PopupDialog(IPopupDialog page)
         {

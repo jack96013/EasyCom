@@ -188,18 +188,15 @@ namespace EasyCom.Connection.Serial
                             this.Dispatcher.InvokeAsync(() => {
                                 Console.WriteLine(tab.TabItem.Title);
                                 tab.ConnectionObject.Close();
-
-                                PageBasicDialog basicDialog = new PageBasicDialog();
-                                basicDialog.InfoTitle = "痾";{
-                                basicDialog.InfoContent = String.Format(CultureInfo.InvariantCulture, "[{0}] 斷線惹...");
                                 ConnectionTabHelper tabHelper = mainWindow.ConnectionTabHelper;
-                                tabHelper.ShowDialogOnReceiveWindow(tab, basicDialog.PopupDialog);
+                                PageDialog dialog = new PageDialog();
+                                dialog.InfoTitle = "痾";
+                                dialog.InfoContent = String.Format(CultureInfo.InvariantCulture, "[{0}] 斷線惹...",0);
+                                dialog.Tab = tab;
+                                
+                                
+                                tabHelper.ShowDialogOnReceiveWindow(tab, dialog.PopupDialog);
                             });
-
-                            
-                            
-
-                            
                         }
                     }
                 }
@@ -330,7 +327,8 @@ namespace EasyCom.Connection.Serial
             Settings settings = (Settings)mainWindow.ConnectionTabHelper.CurrentTabData.toolBarSetting.ConnectionSettings;
             Settings newSettings = new Settings();
             GetSetting(newSettings);
-            SettingChangedCallBack?.Invoke(this, !settings.Equal(newSettings));
+            if (settings != null)
+                SettingChangedCallBack?.Invoke(this, !settings.Equal(newSettings));
         }
 
 

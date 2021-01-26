@@ -46,9 +46,6 @@ namespace EasyCom
             
             ReceiveWindowRefreshTimer.Tick += ReceiveWindowRefreshTimer_Tick;
             ReceiveWindowRefreshTimer.Start();
-
-            
-            
         }
 
         private void ReceiveWindowRefreshTimer_Tick(object sender, EventArgs e)
@@ -299,7 +296,7 @@ namespace EasyCom
             if (tab is null)
                 return;
             tab.toolBarSetting.PopupDialogReceive = dialog;
-            
+            dialog.WindowStatus = PopupDialog.Status.Show;
             if (CurrentTabData == tab)
             {
                 receivePage.PopupDialogHostReceive.Show(dialog);

@@ -94,14 +94,14 @@ namespace EasyCom.Connection.Serial
             currentTab.onDissconnect();
         }
 
-        private static void ShowDialog(string title,string content,MaterialDesignThemes.Wpf.PackIconKind icon)
+        private void ShowDialog(string title,string content,MaterialDesignThemes.Wpf.PackIconKind icon)
         {
-            PopupDialogHost dialogHost = ((MainWindow)App.Current.MainWindow).ConnectionTabHelper.ReceivePage.PopupDialogHostReceive;
-            PageBasicDialog dialog = new PageBasicDialog();
+            PageDialog dialog = new PageDialog();
             dialog.InfoTitle = title;
             dialog.InfoContent = content;
             dialog.Icon = icon;
-            dialogHost.Show(dialog.PopupDialog);
+            dialog.Tab = currentTab;
+            ((MainWindow)App.Current.MainWindow).ConnectionTabHelper.ShowDialogOnReceiveWindow(currentTab,dialog.PopupDialog);
             
         }
 

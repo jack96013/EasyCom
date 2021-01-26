@@ -129,7 +129,7 @@ namespace EasyCom.General
             {
                 animation.Duration = new Duration(TimeSpan.FromMilliseconds(CurrentDialog.ScaleAnimationSpeed));
             }
-
+            CurrentDialog.WindowStatus = PopupDialog.Status.Show;
             CurrentDialog.Page.OnLoaded();
             CurrentDialog.OnOpenInvoke();
             ShowFrame();
@@ -153,9 +153,13 @@ namespace EasyCom.General
         {
             if (CurrentDialog == dialog)
             {
-                CurrentDialog?.Page.OnClose();
-                CurrentDialog?.OnCloseInvoke();
-                CloseFrame();
+                if (CurrentDialog != null)
+                {
+                    CurrentDialog.Page.OnClose();
+                    CurrentDialog.OnCloseInvoke();
+                    CurrentDialog.WindowStatus = PopupDialog.Status.Close;
+                    CloseFrame();
+                }
                 /*
                 ScaleOut.Begin();
                 ScaleOut.Completed += (s,e) => {
@@ -209,7 +213,10 @@ namespace EasyCom.General
         public void ReplaceDialog(PopupDialog dialog)
         {
             CloseFrame();
+            
             if (dialog == null)
+                return;
+            if (dialog.WindowStatus == PopupDialog.Status.Close)
                 return;
             CurrentDialog = dialog;
             ShowFrame();
