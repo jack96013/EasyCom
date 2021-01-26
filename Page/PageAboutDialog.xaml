@@ -1,0 +1,30 @@
+﻿<Page x:Class="EasyCom.PageAboutDialog"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:EasyCom"
+      mc:Ignorable="d" 
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      Height="200" Width="400"
+      Title="About">
+    <Border BorderThickness="1" CornerRadius="3" Background="White">
+        <Grid>
+            <StackPanel Height="30" VerticalAlignment="Top" Background="{StaticResource PrimaryHueDarkBrush}">
+                <Label Content="關於" Margin="13,1,0,0" Background="{x:Null}" Foreground="#DDFFFFFF" FontSize="16"/>
+            </StackPanel>
+            <Button x:Name="Button_Confirm"  Content="是" Margin="0,0,10,10" Height="26" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" HorizontalAlignment="Right" Width="60" VerticalAlignment="Bottom"/>
+            <Label Content="EasyCom" HorizontalAlignment="Left" Margin="52,36,0,0" VerticalAlignment="Top" FontSize="18"/>
+            <Label Content="Beta" HorizontalAlignment="Left" Margin="137,33,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.234,1.179"/>
+            <Label Content="Version" HorizontalAlignment="Left" Margin="256,44,0,0" VerticalAlignment="Top" Width="50"/>
+            <Label Content="Powered by TZU-CHIEH-HSU" HorizontalAlignment="Left" Margin="52,73,0,0" VerticalAlignment="Top"/>
+            <Label Content="真累" HorizontalAlignment="Left" Margin="52,155,0,0" VerticalAlignment="Top"/>
+            <materialDesign:PackIcon Kind="MicrosoftGithub" Margin="54,99,0,0" Height="21" Width="20" />
+            <materialDesign:PackIcon Kind="Email" Margin="54,125,0,0" Width="20" Height="20" />
+            <Label x:Name="Label_Version" Content="Version" HorizontalAlignment="Left" Margin="309,44,0,0" VerticalAlignment="Top" Width="72"/>
+            <Rectangle Fill="#92000000" Height="1" VerticalAlignment="Top" Margin="25,67,25,0" />
+            <Label Content="Unknown" HorizontalAlignment="Left" Margin="79,99,0,0" VerticalAlignment="Top"/>
+            <Label Content="Unknown" HorizontalAlignment="Left" Margin="79,122,0,0" VerticalAlignment="Top"/>
+        </Grid>
+    </Border>
+</Page>

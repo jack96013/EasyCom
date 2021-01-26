@@ -1,0 +1,324 @@
+﻿<Window x:Class="EasyCom.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EasyCom"
+         xmlns:fa="http://schemas.fontawesome.io/icons/"
+        mc:Ignorable="d"
+        
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        
+        Title="EasyCom" Height="700" Width="1000" 
+        >
+    <Window.Resources>
+
+    </Window.Resources>
+    <Grid Background="Black" Name="Parent">
+
+        <Frame x:Name="Popup_DialogFrame" IsTabStop="False" NavigationUIVisibility="Hidden" HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
+            <!--<Frame.RenderTransform>
+                <ScaleTransform x:Name="gdScale" ScaleX="0.2" ScaleY="0.2"/>
+            </Frame.RenderTransform>-->
+            <!--<Frame.Resources>
+                <Storyboard x:Key="FrameIn">
+                    <DoubleAnimation Storyboard.TargetName="gdScale" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.2"/>
+                    <DoubleAnimation Storyboard.TargetName="gdScale" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.2"/>
+                </Storyboard>
+                <Storyboard x:Key="FrameOut">
+                    <DoubleAnimation Storyboard.TargetName="gdScale" Storyboard.TargetProperty="ScaleX" To="0" Duration="0:0:0.2"/>
+                    <DoubleAnimation Storyboard.TargetName="gdScale" Storyboard.TargetProperty="ScaleY" To="0" Duration="0:0:0.2"/>
+                </Storyboard>
+            </Frame.Resources>-->
+        </Frame>
+
+
+        <Grid x:Name="Popup_DialogMask">
+            <Grid x:Name="Main" Background="{StaticResource MaterialDesignBackground}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" Background="{StaticResource PrimaryHueMidBrush}" Margin="0" Name="WindowHeader" Height="30">
+                    <Grid.Resources>
+                        <Style TargetType="Button" x:Key="CloseButtonStyle" BasedOn="{StaticResource MaterialDesignFlatButton}">
+                            <Setter Property="Background" Value="White"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Value="Red" Property="BorderBrush" />
+                                    <Setter Value="Red" Property="Background" />
+                                </Trigger>
+                            </Style.Triggers>
+
+                        </Style>
+                    </Grid.Resources>
+                    <Label Content="EasyCom Beta" Width="234" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" Foreground="#DDFFFFFF"/>
+                    <Button Name="Button_Close" HorizontalAlignment="Right" Margin="0,0,10,0" Width="20" Height="20" Padding="2,3,2,4" Click="Button_Close_Click" Style="{StaticResource CloseButtonStyle}">
+                        <materialDesign:PackIcon Kind="Close" Foreground="#FF673AB7" OpacityMask="Red" Margin="0,-1,0,0"/>
+                    </Button>
+
+                    <Button Name="Button_WinMax" Width="20" HorizontalAlignment="Right" Margin="0,5,35,0" Height="20" Style="{StaticResource MaterialDesignFlatButton}" Background="White" Padding="0,2,0,4" Click="Button_WinMax_Click" VerticalAlignment="Top">
+                        <materialDesign:PackIcon Kind="WindowMaximize" />
+                    </Button>
+                    <Button Name="Button_WinMin"  Width="20" HorizontalAlignment="Right" Margin="0,5,60,5" Height="20" Style="{StaticResource MaterialDesignFlatButton}" Background="White" BorderThickness="0" Padding="0,2,0,4" Click="Button_WinMin_Click">
+                        <materialDesign:PackIcon Kind="WindowMinimize"/>
+                    </Button>
+                </Grid>
+
+
+                <Grid Grid.Row="1" Margin="10,0,10,1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Margin="0,2,0,0" Grid.Row="2" Height="230">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <GroupBox Header="連線" Grid.Column="0" Width="250">
+                            <Grid Margin="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <DockPanel Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                                    <Label Grid.Row="0" Content="連線方式" HorizontalAlignment="Left" VerticalAlignment="Center" Height="26" Width="65" VerticalContentAlignment="Center"/>
+                                    <ComboBox RenderTransformOrigin="0.417,1.27" x:Name="ComboBox_Connection_Type" Margin="0,0,10,0" materialDesign:ComboBoxAssist.ShowSelectedItem="True" materialDesign:ComboBoxAssist.ClassicMode="True"/>
+                                </DockPanel>
+                                <Border Grid.Row="1" BorderBrush="#33000000" BorderThickness="0,1,0,0" Margin="20,2,20,0"/>
+                                <Frame Grid.Row="2" x:Name="Frame_Connection_Setting" Content="" NavigationUIVisibility="Hidden" Margin="0,4,0,3" Height="115"/>
+
+                                <Grid Grid.Row="3">
+                                    <Border BorderBrush="#33000000" BorderThickness="0,1,0,0" Margin="20,0" Height="1" VerticalAlignment="Top"/>
+                                    <Button x:Name="Button_Connection_Connect" Content="連線" Margin="0,0,2,0" Height="22" HorizontalAlignment="Right" Click="Button_Connection_Connect_Click" IsEnabled="False" Padding="0,1,0,0" Width="40" VerticalAlignment="Bottom"/>
+                                    <Button x:Name="Button_Connection_Confirm" Visibility="Visible" DockPanel.Dock="Right" Width="22" Height="22" Padding="-0.5,0,0,0" Margin="0,0,50,0" HorizontalAlignment="Right" VerticalAlignment="Bottom" IsEnabled="False">
+                                        <materialDesign:PackIcon Kind="CheckBold"/>
+                                    </Button>
+                                    <Button x:Name="Button_Connection_Cancel" Visibility="Visible" DockPanel.Dock="Right" Width="22" Height="22" Padding="-0.5,0,0,0" Margin="0,4,80,0" HorizontalAlignment="Right" IsEnabled="False">
+                                        <materialDesign:PackIcon Kind="CloseThick"/>
+                                    </Button>
+
+                                </Grid>
+                            </Grid>
+                        </GroupBox>
+                        <TabControl Grid.Column="2" Width="350">
+                            <TabItem Header="接收">
+                                <TabItem.Content>
+                                    <Grid Margin="0,3,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="1*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Margin="3,3,0,0">
+                                            <Button x:Name="Button_ReceiveWindow_Clear" HorizontalAlignment="Left" VerticalAlignment="Center" Width="100" Padding="13,4,16,4" VerticalContentAlignment="Center">
+                                                <Button.Content>
+                                                    <StackPanel Orientation="Horizontal" Width="85">
+                                                        <materialDesign:PackIcon Kind="TrashCanOutline" Margin="0,0,0,0" Height="24" Width="24" />
+                                                        <ContentPresenter Content="清空" Margin="17,0,0,0" Height="16"/>
+                                                    </StackPanel>
+                                                </Button.Content>
+                                            </Button>
+                                            <Button x:Name="Button_ReceiveWindow_Freeze"  HorizontalAlignment="Left" VerticalAlignment="Center" RenderTransformOrigin="0.125,-0.219" Width="100" Padding="13,0,16,-1" Margin="0,5,0,0">
+                                                <Button.Content>
+                                                    <StackPanel Orientation="Horizontal" Width="85">
+                                                        <materialDesign:PackIcon Name="Button_ReceiveWindow_Freeze_ICON"  Kind="Snowflake" Margin="0,0,0,0" Height="24" Width="24" />
+                                                        <ContentPresenter Name="Button_ReceiveWindow_Freeze_Content" Content="凍結" Margin="16,0,0,0" Height="16"/>
+                                                    </StackPanel>
+                                                </Button.Content>
+                                            </Button>
+                                            <Button x:Name="Button_ReceiveWindow_Save"  HorizontalAlignment="Left" VerticalAlignment="Center" Width="100" Margin="0,6,0,0" Padding="13,4,16,4">
+                                                <Button.Content>
+                                                    <StackPanel Orientation="Horizontal" Width="85">
+                                                        <materialDesign:PackIcon Kind="ContentSaveOutline" Margin="0,0,0,0" Height="24" Width="24" />
+                                                        <ContentPresenter Content="保存" Margin="16,0,0,0" Height="16"/>
+                                                    </StackPanel>
+                                                </Button.Content>
+                                            </Button>
+                                            <Button x:Name="Button_ReceiveWindow_PrintNewLine"  Height="32" VerticalAlignment="Top" HorizontalAlignment="Left" Width="100" Margin="0,5,0,0" Padding="13,4,9,4">
+                                                <Button.Content>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <materialDesign:PackIcon Kind="SubdirectoryArrowLeft" Margin="0,0,0,0" Height="24" Width="24" />
+                                                        <ContentPresenter Content="補換行" Margin="9,0,0,0" Height="16"/>
+                                                    </StackPanel>
+                                                </Button.Content>
+                                            </Button>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Margin="10,0,5,0">
+                                            <StackPanel Orientation="Horizontal" Height="27">
+                                                <Label Content="自動分割封包" VerticalContentAlignment="Center" Width="100"/>
+                                                <ToggleButton x:Name="Toggle_Receive_AutoSpilt"
+                                Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                                ToolTip="Default ToggleButton Style" Margin="80,0,0,0" />
+                                            </StackPanel>
+                                            <DockPanel Name="Dock_Receive_AutoSpilt_Advance" Margin="20,0,0,0">
+                                                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                                                    <Label Content="顯示時間" Height="28" VerticalContentAlignment="Center" Width="80"/>
+                                                    <ToggleButton x:Name="Toggle_Receive_ShowTime" Style="{StaticResource MaterialDesignSwitchToggleButton}" ToolTip="Default ToggleButton Style" Margin="80,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="34"/>
+                                                </StackPanel>
+                                                <DockPanel DockPanel.Dock="Bottom" Visibility="Collapsed">
+                                                    <Label Content="行結尾" DockPanel.Dock="Left" VerticalContentAlignment="Center" Padding="4,5,4,0" Width="80"/>
+                                                    <ComboBox x:Name="Combo_Receive_LineEnding" VerticalAlignment="Stretch"/>
+                                                </DockPanel>
+
+                                            </DockPanel>
+                                            <DockPanel>
+
+                                            </DockPanel>
+                                            <DockPanel Margin="0,5,0,0">
+                                                <Label Content="逾時" Width="100"/>
+                                                <TextBox x:Name="TextBox_Receive_Timeout" Width="92"/>
+                                                <Label Content="ms" VerticalContentAlignment="Center" Width="27"/>
+                                            </DockPanel>
+
+                                            <DockPanel>
+                                                <Label Content="編碼" DockPanel.Dock="Left" VerticalContentAlignment="Center" Padding="4,5,4,0" Width="100"/>
+                                                <ComboBox x:Name="Combo_Receive_DecodeType" VerticalAlignment="Stretch"/>
+                                            </DockPanel>
+
+                                        </StackPanel>
+                                    </Grid>
+                                </TabItem.Content>
+
+                            </TabItem>
+                            <TabItem Header="發送">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="1*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Margin="3">
+                                        <DockPanel Height="27">
+                                            <Label Content="自動行結尾" DockPanel.Dock="Left" VerticalContentAlignment="Center" Padding="4,5,4,0" Width="80"/>
+                                            <ComboBox x:Name="Combo_Send_LineEnding"/>
+                                        </DockPanel>
+
+                                        <DockPanel Height="27">
+                                            <Label Content="HEX" Width="120"/>
+                                            <ToggleButton x:Name="Toggle_Send_Hex" Style="{StaticResource MaterialDesignSwitchToggleButton}" ToolTip="Default ToggleButton Style" />
+                                        </DockPanel>
+                                        <DockPanel Height="27">
+                                            <Label Content="顯示在接收欄位" Width="120"/>
+                                            <ToggleButton x:Name="Toggle_Send_ShowOnReceive" Style="{StaticResource MaterialDesignSwitchToggleButton}" ToolTip="Default ToggleButton Style" />
+                                        </DockPanel>
+                                    </StackPanel>
+                                    <Border Grid.Column="1" BorderThickness="1,0,0,0" BorderBrush="#34000000"/>
+                                    <StackPanel Grid.Column="2" Margin="3">
+                                        <DockPanel Margin="0,2.5,0,0" VerticalAlignment="Center">
+                                            <CheckBox x:Name="CheckBox_AutoSender_Enable" Content="定時發送" Margin="2.5,0,0,0" VerticalAlignment="Bottom" Padding="4,1,0,0" Width="80" VerticalContentAlignment="Center"/>
+                                            <TextBox x:Name="TextBox_AutoSender_Interval" TextWrapping="Wrap" Margin="5,0,0,0" Width="80" Padding="1,1,0,0"/>
+                                            <Label Content="ms" Width="19" Margin="2.5,0,0,0" DockPanel.Dock="Right" Padding="0,1,0,0" VerticalAlignment="Bottom"/>
+                                        </DockPanel>
+                                        <DockPanel Margin="0,2.5,0,0" VerticalAlignment="Center">
+                                            <CheckBox x:Name="CheckBox_AutoSender_AmountEnable" Content="總共" Margin="2.5,0,0,0" Padding="4,1,0,0" Width="80" VerticalAlignment="Bottom"/>
+                                            <TextBox x:Name="TextBox_AutoSender_Amount" TextWrapping="Wrap" Margin="5,0,0,0" Width="80" Padding="1,1,0,0"/>
+                                            <Label Content="次" Width="19" Margin="2.5,0,0,0" Padding="0,1,0,0" VerticalAlignment="Bottom"/>
+                                        </DockPanel>
+                                    </StackPanel>
+                                </Grid>
+
+                            </TabItem>
+
+                        </TabControl>
+
+                        <Grid Grid.Column="3" Margin="5,0,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0" Margin="5,0,0,0" Background="White">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Grid>
+                                    <Border BorderBrush="#3E000000" BorderThickness="1,1,1,0"  Margin="0">
+                                        <TextBox x:Name="TextBox_Send_Text" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" AcceptsReturn="True"/>
+                                    </Border>
+                                </Grid>
+
+
+                                <Grid Grid.Column="1">
+                                    <Button x:Name="Button_Send_Text" VerticalAlignment="Top" Grid.Column="0" Margin="3,10,3,0" Click="Text_Send_Click" IsEnabled="True" Height="Auto">
+                                        <materialDesign:PackIcon Kind="PaperAirplane" />
+                                    </Button>
+                                    <Button Content="儲存" Margin="3,0,3,10" Height="Auto" VerticalAlignment="Bottom"/>
+                                </Grid>
+                            </Grid>
+                            <Grid Grid.Row="1">
+                                <TextBox x:Name="TextBox_Send_Path" Margin="98,2,68,3" TextWrapping="Wrap" VerticalAlignment="Center" AutomationProperties.HelpText="檔案路徑" Height="30"/>
+                                <Button Content="開啟檔案" HorizontalAlignment="Left" Margin="4,2.5,0,2.5" VerticalAlignment="Center" Height="Auto"/>
+                                <Button x:Name="File_Send_Button" VerticalAlignment="Center" Margin="0,5,3,6" Height="Auto" HorizontalAlignment="Right" Click="File_Send_Click" IsEnabled="False" Width="60">
+                                    <materialDesign:PackIcon Kind="PaperAirplane"/>
+                                </Button>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+
+                    <Grid Margin="0" Grid.Row="1">
+                        <Grid x:Name="aaass">
+                            <Grid.Resources>
+                                <DataTemplate x:Key="CustomHeaderTemplate">
+
+                                    <DockPanel LastChildFill="True">
+                                        <Button Content="X" DockPanel.Dock="Right"
+                            Command="{Binding DataContext.CloseCommand, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}"
+                            CommandParameter="{Binding Name}" Height="10" Width="10">
+                                            <Button.Template>
+                                                <ControlTemplate>
+                                                    <!--<fa:ImageAwesome Icon="Times" VerticalAlignment="Center" HorizontalAlignment="Center" DockPanel.Dock="Right" Width="9" Foreground="#FFACACAC" Margin="0" />-->
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
+                                        <Label Content="{Binding Name}" />
+
+
+                                    </DockPanel>
+                                </DataTemplate>
+
+                            </Grid.Resources>
+
+                            <TabControl x:Name="TabControl_ReceiveWindow" Margin="0">
+
+                            </TabControl>
+
+
+                        </Grid>
+                    </Grid>
+                    <Grid Grid.Row="3" Width="972" HorizontalAlignment="Right" Background="#FFEEEEEE" Margin="0,3,0,0" Height="20">
+                        <StackPanel Name="Panel_UpdateNotify" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,27,0">
+                            <Rectangle Width="1" HorizontalAlignment="Right" Fill="#FF878787" Margin="1,2,0,2"/>
+                            <Label Content="有新版本" Padding="0,2,0,0" HorizontalAlignment="Right" FontSize="12" Margin="3,1,0,1"/>
+                            <Button x:Name="Button_Update" Style="{StaticResource MaterialDesignFlatButton}" Height="16" Padding="0" HorizontalAlignment="Right" Width="16" Margin="7,0,0,0">
+                                <materialDesign:PackIcon Kind="ArrowUpBoldBoxOutline" Width="17" Height="17" Padding="0"/>
+                            </Button>
+                        </StackPanel>
+                        <Rectangle Width="1" HorizontalAlignment="Right" Fill="#FF878787" Margin="1,2,21,2"/>
+                        <Button x:Name="Button_About" HorizontalAlignment="Right" Style="{StaticResource MaterialDesignFlatButton}" Width="18" Padding="0" Height="18" Margin="0,0,1,0">
+                            <materialDesign:PackIcon Kind="InfoCircle" />
+                        </Button>
+                    </Grid>
+                </Grid>
+
+            </Grid>
+        </Grid>
+
+    </Grid>
+
+</Window>

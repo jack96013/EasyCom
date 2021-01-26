@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">  
+  <PropertyGroup>  
+    <TargetFrameworks>net5.0-windows</TargetFrameworks>  
+    <UseWindowsForms>true</UseWindowsForms>  
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>  
+    <AssemblyName>EasyCom</AssemblyName>  
+    <RootNamespace>EasyCom</RootNamespace>  
+  </PropertyGroup>
+	<ItemGroup>
+		<Compile Include="..\**\*.cs" />
+		<EmbeddedResource Include="..\**\*.resx" />
+	</ItemGroup>
+
+</Project>  

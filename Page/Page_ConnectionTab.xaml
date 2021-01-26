@@ -1,0 +1,123 @@
+﻿<Page
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:EasyCom"
+      xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      x:Class="EasyCom.Page_ConnectionTab"
+      
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="Page_ConnectionTab">
+    <Page.Resources>
+        <Style x:Key="GridSplitterVerticalGripStyle" TargetType="{x:Type GridSplitter}">
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Cursor" Value="SizeWE" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Background"
+                    Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type GridSplitter}">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Background="{TemplateBinding Background}"
+                                Width="{TemplateBinding Width}">
+                            <Border Height="100" Width="4" VerticalAlignment="Center"
+                                    HorizontalAlignment="Center" BorderThickness="1 0"
+                                    Background="White" BorderBrush="#A0A0A0"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+    <Grid Background="White">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="400" MinWidth="400" MaxWidth="600" Name="ToolBarColumn"/>
+        </Grid.ColumnDefinitions>
+        <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Disabled">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="0"/>
+                    <ColumnDefinition Width="0"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="Receive_Timestamp" Grid.Column="0" TextWrapping="Wrap" IsReadOnly="True" Text="00:00:00:000" Grid.ColumnSpan="2"/>
+                <Grid Grid.Column="1" Background="Black" Margin="0">
+                    <Frame Name="DialogHostFrameReceive" Panel.ZIndex="1" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" NavigationUIVisibility="Hidden">
+                    </Frame>
+                    <Grid Name="ReceiveMain" Background="White">
+                        <avalonEdit:TextEditor
+                            xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
+                            x:Name="TextBox_Test"
+                            FontFamily="Consolas"
+                            FontSize="10pt"
+                            ShowLineNumbers="True"
+           
+                            />
+                    </Grid>
+                </Grid>
+                <TextBox Grid.Column="3" x:Name="TextBox_Receive" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" VirtualizingPanel.IsVirtualizing="True"  Text="{Binding text}"/>
+            </Grid>
+        </ScrollViewer>
+
+        <GridSplitter x:Name="GridSpiltter_Tools" Grid.Column="1" HorizontalAlignment="Left" Margin="6,20,0,25" Width="5" Style="{StaticResource GridSplitterVerticalGripStyle}"/>
+        <Button x:Name="Button_ToolBarVisible" Grid.Column="1" HorizontalAlignment="Left" Width="16" Height="16" Style="{StaticResource MaterialDesignFlatButton}" VerticalAlignment="Bottom" Margin="1,0,0,2" Padding="0" Click="Button_ToolBarVisible_Click">
+            <Border BorderThickness="2" BorderBrush="#4C000000" Padding="0,0,0,0">
+                <materialDesign:PackIcon Kind="ArrowRightBold" Width="Auto" Height="Auto" UseLayoutRounding="False"/>
+            </Border>
+        </Button>
+        <Grid Grid.Column="1" Background="Black" Margin="18,0,0,0">
+            <Frame Name="DialogHostFrame" Panel.ZIndex="1" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" NavigationUIVisibility="Hidden">
+
+            </Frame>
+                <Grid x:Name="ToolBarMain" Background="{StaticResource MaterialDesignBackground}">
+                <TabControl x:Name="TabControl_Tools" Grid.Column="1" Visibility="Visible" Padding="2">
+                    <TabItem Header="多字串發送" Width="80">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0">
+                                <Label Content="分類" HorizontalAlignment="Left" Margin="5,5,5,5"/>
+                                <ComboBox x:Name="Combo_CustomStrTab" HorizontalAlignment="Left" Margin="45,5,0,0" Width="98" Height="25" VerticalAlignment="Top" VerticalContentAlignment="Center" materialDesign:ComboBoxAssist.ShowSelectedItem="True" materialDesign:ComboBoxAssist.ClassicMode="True">
+                                </ComboBox>
+                                <Button Name="Button_Command_Add" Height="25" Width="25" HorizontalAlignment="Right" Margin="0,5,76,5" Padding="3,0,2,0">
+                                    <materialDesign:PackIcon Kind="AddThick" />
+                                </Button>
+                                <Button Margin="0,5,46,5" Width="25" HorizontalAlignment="Right" Height="25" Padding="1,0,0,0">
+                                    <materialDesign:PackIcon Kind="TrashCanOutline" />
+                                </Button>
+                                <Button Name="Buttom_CustomStrBookMark" Margin="0,5,16,5" Width="25" Height="25" HorizontalAlignment="Right" RenderTransformOrigin="1.747,0.48" Padding="1,0,0,0">
+                                    <materialDesign:PackIcon Kind="Book" />
+                                </Button>
+
+
+                            </Grid>
+
+                            <ListBox Grid.Row="1" Margin="5" x:Name="ListBox_CustomStr">
+                                <ListBox.Resources>
+                                    <Style x:Key="ListBoxItemStyle" TargetType="{x:Type ListBoxItem}">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                                    </Style>
+                                </ListBox.Resources>
+                            </ListBox>
+
+
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="圖表" Width="80"/>
+                    <TabItem Header="控制器" Width="80"/>
+                </TabControl>
+            </Grid>
+        </Grid>
+    </Grid>
+</Page>

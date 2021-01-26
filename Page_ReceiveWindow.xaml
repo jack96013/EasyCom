@@ -1,0 +1,49 @@
+﻿<Page x:Class="EasyCom.Page_ReceiveWindow"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:EasyCom"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="Page_ReceiveWindow">
+
+
+    <ScrollViewer>
+        <Grid Width="772">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="Receive_Timestamp" Grid.Column="0" TextWrapping="Wrap" IsReadOnly="True" Text="00:00:00:000" Grid.ColumnSpan="2"/>
+            <avalonEdit:TextEditor
+            xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
+            Name="TextBox_Test"
+            FontFamily="Consolas"
+            FontSize="10pt"
+                Grid.Column="1"/>
+            <RichTextBox x:Name="Receive_Text" Grid.Column="2" HorizontalScrollBarVisibility="Auto" TextChanged="Receive_Text_TextChanged">
+                <RichTextBox.Resources>
+                    <Style TargetType="{x:Type Paragraph}">
+                        <Setter Property="Margin" Value="0" />
+                    </Style>
+                </RichTextBox.Resources>
+
+                <FlowDocument>
+
+                    <Paragraph>
+                        This is flow content and you can
+                        <LineBreak/>
+                        <Bold>edit me!</Bold>
+                    </Paragraph>
+                    <Paragraph>
+                        This is flow content and you can
+                        <Bold>edit me!</Bold>
+                    </Paragraph>
+                </FlowDocument>
+            </RichTextBox>
+        </Grid>
+    </ScrollViewer>
+
+</Page>

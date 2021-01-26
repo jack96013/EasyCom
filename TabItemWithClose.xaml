@@ -1,0 +1,24 @@
+﻿<TabItem x:Class="ComMaster.TabItemWithClose"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
+             xmlns:local="clr-namespace:ComMaster"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <TabItem.Header>
+        <DockPanel LastChildFill="True">
+            <Button Content="X" DockPanel.Dock="Right"
+                            Command="{Binding DataContext.CloseCommand, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}"
+                            CommandParameter="{Binding Name}" Height="10" Width="10">
+                <Button.Template>
+                    <ControlTemplate>
+                        <fa:ImageAwesome Icon="Times" VerticalAlignment="Center" HorizontalAlignment="Center" DockPanel.Dock="Right" Width="9" Foreground="#FFACACAC" Margin="0" />
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+            <Label Content="{Binding Name}" />
+        </DockPanel>
+    </TabItem.Header>
+</TabItem>

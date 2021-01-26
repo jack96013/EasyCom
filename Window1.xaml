@@ -1,0 +1,126 @@
+﻿<Window x:Class="ComMaster.Window1"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ComMaster"
+        mc:Ignorable="d"
+        Title="ComMaster" Height="450" Width="800"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto"        
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        >
+    <Grid Margin="10,10,10,10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+
+        </Grid.RowDefinitions>
+
+        <Grid Margin="0,2,0,0" Grid.Row="2" Height="125">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <GroupBox Header="連線" Grid.Column="0" Width="235">
+                <StackPanel Margin="2.5,2.5,2.5,2.5">
+                    <DockPanel VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                        <Label Grid.Row="0" Content="連線方式" HorizontalAlignment="Left" VerticalAlignment="Center" Height="25" Width="65"/>
+                        <ComboBox RenderTransformOrigin="0.417,1.27" Height="21.24" Width="102" x:Name="ComboBox_Connection_Type"/>
+                        <Button x:Name="Connection_Connect" Content="連線" Margin="0,0,2.5,0" Height="19" Width="41" HorizontalAlignment="Right" Click="Connection_Connect_Click" IsEnabled="False" Padding="0,1,0,0"/>
+                    </DockPanel>
+                    <Frame x:Name="Connection_Setting" Grid.Row="0" Content="" NavigationUIVisibility="Hidden" Height="73"/>
+                </StackPanel>
+
+            </GroupBox>
+
+
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBox x:Name="TextBox_SendText" Margin="10,2,78,3" TextWrapping="Wrap" Grid.Row="0"/>
+                <Button x:Name="Text_Send_Button" Content="發送" VerticalAlignment="Top" Grid.Row="0" Margin="0,10,10,0" Height="20" HorizontalAlignment="Right" Width="60" Click="Text_Send_Click" IsEnabled="False"/>
+                <TextBox x:Name="TextBox_SendPath" Margin="68,0,78,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Height="18" AutomationProperties.HelpText="檔案路徑"/>
+
+                <Button Content="開啟檔案" HorizontalAlignment="Left" Margin="10,2.5,0,2.5" Grid.Row="1" VerticalAlignment="Center" Height="20" Width="53"/>
+                <Button x:Name="File_Send_Button" Content="發送" Grid.Row="1" VerticalAlignment="Center" Margin="0,0,10,0" Height="20" HorizontalAlignment="Right" Width="60" Click="File_Send_Click" IsEnabled="False"/>
+                <Button Grid.Row="0" Content="儲存" Margin="0,70,10,0" Height="20" VerticalAlignment="Top" HorizontalAlignment="Right" Width="60"/>
+
+            </Grid>
+
+            <GroupBox Header="發送設定" Grid.Column="1">
+                <StackPanel Width="160" Height="125">
+                    <DockPanel>
+                        <Label Content="行結尾" VerticalAlignment="Top" Height="25" Width="60" DockPanel.Dock="Left"/>
+                        <ComboBox x:Name="ComboBox_LineEnding" Padding="6,3,8,3" DockPanel.Dock="Right" Margin="2.5,0,0,0" Height="21.24"/>
+                    </DockPanel>
+                    <CheckBox Content="HEX" Margin="2.5,2.5,0,0"/>
+                    <DockPanel Margin="0,2.5,0,0" VerticalAlignment="Center">
+                        <CheckBox x:Name="CheckBox_AutoSender_Interval" Content="定時發送" Margin="2.5,0,0,0" VerticalAlignment="Center" Padding="4,0,0,0" Width="70"/>
+                        <TextBox x:Name="TextBox_AutoSender_Interval" TextWrapping="Wrap" Margin="4,0,0,0" Width="62" Padding="1,1,0,0"/>
+                        <Label Content="ms" Width="19" Margin="2.5,0,0,0" DockPanel.Dock="Right" Padding="0,1,0,0"/>
+                    </DockPanel>
+                    <DockPanel Margin="0,2.5,0,0" VerticalAlignment="Center">
+                        <CheckBox x:Name="CheckBox_AutoSender_Amount" Content="總共" Margin="2.5,0,0,0" VerticalAlignment="Center" Padding="4,0,0,0" Width="70"/>
+                        <TextBox x:Name="TextBox_AutoSender_Amount" TextWrapping="Wrap" Margin="4,0,0,0" Width="62" Padding="1,1,0,0"/>
+                        <Label Content="次" Width="19" Margin="2.5,0,0,0" Padding="0,1,0,0"/>
+                    </DockPanel>
+
+
+
+                </StackPanel>
+            </GroupBox>
+        </Grid>
+        <Grid Margin="0,0,0,29" Grid.RowSpan="2">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50*"/>
+                    <ColumnDefinition Width="50*"/>
+                </Grid.ColumnDefinitions>
+
+                <TabControl x:Name="TabControl_Receive_Window" Margin="0,0,2.5,0">
+                    <TabControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Height="21" Width="100">
+                                <TextBlock Width="80" Text="{Binding Header}"/>
+                                <TextBlock Text="A"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </TabControl.ItemTemplate>
+
+                    <TabItem Header="TabItem">
+                        <Grid Background="#FFE5E5E5"/>
+                    </TabItem>
+                </TabControl>
+
+                <TabControl Grid.Column="1" Margin="2.5,0,0,0">
+                    <TabItem Header="自訂指令表">
+                        <Grid Background="#FFE5E5E5"/>
+                    </TabItem>
+                    <TabItem Header="圖表">
+                        <Grid Background="#FFE5E5E5"/>
+                    </TabItem>
+                </TabControl>
+            </Grid>
+        </Grid>
+        <Button Content="清空數據" HorizontalAlignment="Left" Margin="67,0,0,0" Grid.Row="1" VerticalAlignment="Center"/>
+        <Button Content="暫停接收" HorizontalAlignment="Left" Margin="10,5,0,5" Grid.Row="1" VerticalAlignment="Center"/>
+        <Label Content="紀錄數據" HorizontalAlignment="Left" Margin="301,0,0,0" Grid.Row="1" VerticalAlignment="Center"/>
+        <Button Content="保存數據" HorizontalAlignment="Left" Margin="124,0,0,0" Grid.Row="1" VerticalAlignment="Center"/>
+        <Button Content="Button" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Width="46" RenderTransformOrigin="0.5,0.515"/>
+        <Label Content="編碼" HorizontalAlignment="Left" Margin="181,0,0,0" Grid.Row="1" VerticalAlignment="Center"/>
+        <ComboBox x:Name="ComboBox_Decode" HorizontalAlignment="Left" Margin="220,0,0,0" Grid.Row="1" VerticalAlignment="Center" Width="76"/>
+
+
+
+    </Grid>
+</Window>
