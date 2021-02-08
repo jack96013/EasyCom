@@ -5,7 +5,8 @@ namespace EasyCom.General
 {
     public class PopupDialog
     {
-        public PopupDialogHost PopUpDialogHost { get; set; } = null;
+        private PopupDialogHost host=null;
+        public PopupDialogHost PopUpDialogHost { get => host; set { host = value; Console.WriteLine(value); } }
         public double OpacityPercent { get; set; } = 0.25;
         public bool AllowClickMaskToClose { get; set; } = true;
 
@@ -21,7 +22,7 @@ namespace EasyCom.General
 
         public bool ScaleAnimationEnable { get; set; } = true;
 
-        public int ScaleAnimationSpeed { get; set; } = 100;
+        public TimeSpan ScaleAnimationTime { get; set; } = TimeSpan.FromMilliseconds(100);
         public IPopupDialog Page { get; set; }
 
         public enum Status {

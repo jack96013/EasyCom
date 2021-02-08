@@ -156,10 +156,10 @@ namespace EasyCom.Connection.Serial
         public uint value = 0;
         private PopupDialogHost PopupDialogHost = null;
         private PageSetting page_Setting_Serial;
-        public CustomBaudrate(PageSetting page_Setting_Serial, PopupDialogHost popupDialogHost)
+        public CustomBaudrate(PageSetting pageSettingSerial, PopupDialogHost popupDialogHost)
         {
             this.PopupDialogHost = popupDialogHost;
-            this.page_Setting_Serial = page_Setting_Serial;
+            this.page_Setting_Serial = pageSettingSerial;
             Label label = new Label() { Content = "" };
 
         }

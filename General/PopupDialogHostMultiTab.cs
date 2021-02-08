@@ -19,7 +19,7 @@ namespace EasyCom.General
         {
             if (tab is null)
                 return;
-            tab.toolBarSetting.PopupDialogReceive = dialog;
+            tab.ToolBarSetting.PopupDialogReceive = dialog;
             dialog.WindowStatus = PopupDialog.Status.Show;
             if (TabHelper.CurrentTabData== tab)
             {
@@ -30,8 +30,8 @@ namespace EasyCom.General
         {
             if (tab is null)
                 return;
-            tab.toolBarSetting.PopupDialogReceive.Close();
-            tab.toolBarSetting.PopupDialogReceive = null;
+            tab.ToolBarSetting.PopupDialogReceive.Close();
+            tab.ToolBarSetting.PopupDialogReceive = null;
         }
     }
 }

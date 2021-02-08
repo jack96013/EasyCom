@@ -11,11 +11,10 @@ namespace EasyCom.Connection.Serial
     public partial class SerialHelper : IConnection
     {
         //public SerialPortStream Serial;
-        public SerialPort SerialPort;
+        public SerialPort SerialPort { get; set; }
         private ConnectionTabData currentTab;
 
         private EasyCom.Settings.ToolBarSetting toolBarSettings;
-        private Settings ConnectionSettings;
 
         public Stopwatch stopwatch1 = new Stopwatch();
 
@@ -33,28 +32,55 @@ namespace EasyCom.Connection.Serial
             this.SerialPort = new SerialPort();
             SerialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
 
-            toolBarSettings = currentTab.toolBarSetting;
-            ConnectionSettings = (Settings)toolBarSettings.ConnectionSettings;
+            toolBarSettings = currentTab.ToolBarSetting;
+            currentTab.ToolBarSetting.ConnectionSettings = (Settings)toolBarSettings.ConnectionSettings;
             
             //SerialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
         }
 
+        /// <summary>
+        /// Apply new settings ,if fail occurred ,the function return false; 
+        /// </summary>
+        /// <returns></returns>
         public bool ApplySettings()
         {
-            string PortName = String.Format(CultureInfo.InvariantCulture, "COM{0}", ConnectionSettings.ComPort);
-            if (SerialPort.PortName != PortName)
-                SerialPort.PortName = String.Format(CultureInfo.InvariantCulture, "COM{0}", ConnectionSettings.ComPort);
-            SerialPort.BaudRate = Convert.ToInt32(ConnectionSettings.Baudrate);
-            
-            SerialPort.RtsEnable = ConnectionSettings.RTSEnable;
-            SerialPort.DtrEnable = ConnectionSettings.DTREnable;
-            SerialPort.DataBits = ConnectionSettings.DataBits.Value;
-            SerialPort.StopBits = ConnectionSettings.StopBits.Value;
-            SerialPort.Parity = ConnectionSettings.Parity.Value;
-            SerialPort.Handshake = ConnectionSettings.Handshake.Value;
+            try
+            {
+                Settings ConnectionSettings = (Settings)currentTab.ToolBarSetting.ConnectionSettings;
+                string PortName = String.Format(CultureInfo.InvariantCulture, "COM{0}", ConnectionSettings.ComPort);
+                if (SerialPort.PortName != PortName)
+                    SerialPort.PortName = String.Format(CultureInfo.InvariantCulture, "COM{0}", ConnectionSettings.ComPort);
+                SerialPort.BaudRate = Convert.ToInt32(ConnectionSettings.Baudrate);
+                SerialPort.RtsEnable = ConnectionSettings.RTSEnable;
+                SerialPort.DtrEnable = ConnectionSettings.DTREnable;
+                SerialPort.DataBits = ConnectionSettings.DataBits.Value;
+                SerialPort.StopBits = ConnectionSettings.StopBits.Value;
+                SerialPort.Parity = ConnectionSettings.Parity.Value;
+                SerialPort.Handshake = ConnectionSettings.Handshake.Value;
 
-            SerialPort.ReadTimeout = Convert.ToInt32(toolBarSettings.ReceiveTimeOut);
+                SerialPort.ReadTimeout = Convert.ToInt32(toolBarSettings.ReceiveTimeOut);
+            }
+            catch (System.IO.IOException e)
+            {
+                ApplyNewSettingOnError(e, "無效的連線參數");
+                return false;
+            }
+            catch (InvalidOperationException e)
+            {
+                ApplyNewSettingOnError(e, "無效的連線參數");
+                return false;
+            }
             return true;
+        }
+
+        private void ApplyNewSettingOnError(Exception e, string helperText)
+        {
+            ShowDialog("設定失敗",
+                        string.Format(CultureInfo.InvariantCulture, "{0}\n{1}", e.Message, helperText),
+                        "重試",
+                        () => { currentTab.ApplySetting(); },
+                        PackIconKind.CloseCircleOutline);
+            //currentTab.ApplyOnFail();
         }
 
         public void Open()
@@ -89,20 +115,23 @@ namespace EasyCom.Connection.Serial
         {
             ShowDialog("連線失敗",
                         string.Format(CultureInfo.InvariantCulture, "{0}\n{1}", e.Message, helperText),
+                        "重新連線",
+                        () => { currentTab.Connect(); },
                         PackIconKind.CloseCircleOutline);
             currentTab.onConnectFail();
             currentTab.onDissconnect();
         }
 
-        private void ShowDialog(string title,string content,MaterialDesignThemes.Wpf.PackIconKind icon)
+        private void ShowDialog(string title,string content,string redoButtonText,Action buttonRedoAction,MaterialDesignThemes.Wpf.PackIconKind icon)
         {
             PageDialog dialog = new PageDialog();
             dialog.InfoTitle = title;
             dialog.InfoContent = content;
             dialog.Icon = icon;
             dialog.Tab = currentTab;
+            dialog.Button_Redo.Content = redoButtonText;
+            dialog.ButtonRedoAction = buttonRedoAction;
             ((MainWindow)App.Current.MainWindow).ConnectionTabHelper.ShowDialogOnReceiveWindow(currentTab,dialog.PopupDialog);
-            
         }
 
         public void Close()
@@ -169,6 +198,7 @@ namespace EasyCom.Connection.Serial
 
                 if (Connected)
                 {
+                    Settings ConnectionSettings = (Settings)currentTab.ToolBarSetting.ConnectionSettings;
                     String PortName = String.Format(CultureInfo.InvariantCulture, "COM{0}", ConnectionSettings.ComPort);
                     if (SerialPort.PortName != PortName)
                         return false;

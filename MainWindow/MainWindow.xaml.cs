@@ -31,14 +31,12 @@ namespace EasyCom
 
     public partial class MainWindow : Window
     {
-        
-
         private ConnectionTabHelper connectionTabHelper;
 
 
         private PopupDialogHost popupDialogHost = null;
 
-        private Updater updater;
+        private readonly Updater updater;
 
         private MainWindowOption mainWindowOption;
         internal MainWindowOption Options { get => mainWindowOption; set => mainWindowOption = value; }
@@ -47,7 +45,7 @@ namespace EasyCom
         public PopupDialogHost PopupDialogHost { get => popupDialogHost; set => popupDialogHost = value; }
 
 
-        private ControlCommandHandle controlCommandHandle;
+        private readonly ControlCommandHandle controlCommandHandle;
         
         public CustomStr.CustomStrManager CustomStrManager { get; set; } = null;
 
@@ -151,14 +149,14 @@ namespace EasyCom
 
         private void Button_Connection_Cancel_Click(object sender, RoutedEventArgs e)
         {
-            ((IPageSetting)connectionTabHelper.CurrentTabData.ConnectionType.AdvanceSettingsPage).SettingsRestore(connectionTabHelper.CurrentTabData.toolBarSetting.ConnectionSettings);
+            ((IPageSetting)connectionTabHelper.CurrentTabData.ConnectionType.AdvanceSettingsPage).SettingsRestore(connectionTabHelper.CurrentTabData.ToolBarSetting.ConnectionSettings);
             SettingChangedCallBack(null, false);
         }
 
         private void Button_Connection_Confirm_Click(object sender, RoutedEventArgs e)
         {
-            connectionTabHelper.CurrentTabData.ApplySetting();
-            SettingChangedCallBack(null,false);
+            bool successful = connectionTabHelper.CurrentTabData.ApplySetting();
+            SettingChangedCallBack(null,!successful);
         }
 
         private void Button_About_Click(object sender, RoutedEventArgs e)
@@ -174,21 +172,21 @@ namespace EasyCom
 
         public void Button_ReceiveWindow_PrintNewLine_Click(object sender, RoutedEventArgs e)
         {
-            ConnectionTabHelper.CurrentTabData.toolBarSetting.ReceiveWindowText.Append("\n");
-            ConnectionTabHelper.CurrentTabData.toolBarSetting.ReceiveWindowTextUpdated = true;
+            ConnectionTabHelper.CurrentTabData.ToolBarSetting.ReceiveWindowText.Append("\n");
+            ConnectionTabHelper.CurrentTabData.ToolBarSetting.ReceiveWindowTextUpdated = true;
         }
 
         public void Button_ReceiveWindow_Freeze_Click(object sender, RoutedEventArgs e)
         {
-            if (ConnectionTabHelper.CurrentTabData.toolBarSetting.ReceiveWindowFreeze)
+            if (ConnectionTabHelper.CurrentTabData.ToolBarSetting.ReceiveWindowFreeze)
             {
-                ConnectionTabHelper.CurrentTabData.toolBarSetting.ReceiveWindowFreeze = false;
+                ConnectionTabHelper.CurrentTabData.ToolBarSetting.ReceiveWindowFreeze = false;
                 this.Button_ReceiveWindow_Freeze_Content.Content = "凍結";
                 this.Button_ReceiveWindow_Freeze_ICON.Kind = MaterialDesignThemes.Wpf.PackIconKind.Snowflake;
             }
             else
             {
-                ConnectionTabHelper.CurrentTabData.toolBarSetting.ReceiveWindowFreeze = true;
+                ConnectionTabHelper.CurrentTabData.ToolBarSetting.ReceiveWindowFreeze = true;
                 this.Button_ReceiveWindow_Freeze_Content.Content = "解凍";
                 this.Button_ReceiveWindow_Freeze_ICON.Kind = MaterialDesignThemes.Wpf.PackIconKind.SnowflakeMelt;
             }
@@ -196,8 +194,8 @@ namespace EasyCom
 
         public void Button_ReceiveWindow_Clear_Click(object sender, RoutedEventArgs e)
         {
-            ConnectionTabHelper.CurrentTabData.toolBarSetting.ReceiveWindowText.Clear();
-            ConnectionTabHelper.CurrentTabData.toolBarSetting.ReceiveWindowTextUpdated = true;
+            ConnectionTabHelper.CurrentTabData.ToolBarSetting.ReceiveWindowText.Clear();
+            ConnectionTabHelper.CurrentTabData.ToolBarSetting.ReceiveWindowTextUpdated = true;
         }
 
         public void ConnectionTypeListInit()
@@ -216,6 +214,7 @@ namespace EasyCom
             }
             else
             {
+                ConnectionTabHelper.CurrentTabData.SaveSettingFromAdvancedSettingPage();
                 ConnectionTabHelper.CurrentTabData.Connect();
             }
         }
@@ -332,77 +331,78 @@ namespace EasyCom
         {
             bool Result = ((ToggleButton)sender).IsChecked.Value;
             Dock_Receive_AutoSpilt_Advance.IsEnabled = Result;
-            ConnectionTabHelper.CurrentTabData.toolBarSetting.ReceiveAutoSpilt = Result;
+            ConnectionTabHelper.CurrentTabData.ToolBarSetting.ReceiveAutoSpilt = Result;
             //MessageBox.Show("IsChecked:" + ((ToggleButton)sender).IsChecked);
         }
 
         private void Toggle_Send_ShowOnReceive_CheckedChange(object sender, RoutedEventArgs e)
         {
-            ConnectionTabHelper.CurrentTabData.toolBarSetting.SendShowOnReceive = ((ToggleButton)sender).IsChecked.Value;
+            ConnectionTabHelper.CurrentTabData.ToolBarSetting.SendShowOnReceive = ((ToggleButton)sender).IsChecked.Value;
         }
 
         private void CheckBox_AutoSender_AmountEnable_CheckedChange(object sender, RoutedEventArgs e)
         {
-            ConnectionTabHelper.CurrentTabData.toolBarSetting.SendAutoSenderAmountEnable = ((CheckBox)sender).IsChecked.Value;
+            ConnectionTabHelper.CurrentTabData.ToolBarSetting.SendAutoSenderAmountEnable = ((CheckBox)sender).IsChecked.Value;
         }
 
         private void TextBox_AutoSender_Amount_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ConnectionTabHelper.CurrentTabData.toolBarSetting.SendAutoSenderAmount = uint.Parse(((TextBox)sender).Text);
+            ConnectionTabHelper.CurrentTabData.ToolBarSetting.SendAutoSenderAmount = uint.Parse(((TextBox)sender).Text);
         }
 
         private void CheckBox_AutoSender_Enable_CheckedChange(object sender, RoutedEventArgs e)
         {
-            ConnectionTabHelper.CurrentTabData.toolBarSetting.SendAutoSenderEnable = ((CheckBox)sender).IsChecked.Value;
+            ConnectionTabHelper.CurrentTabData.ToolBarSetting.SendAutoSenderEnable = ((CheckBox)sender).IsChecked.Value;
         }
 
         private void TextBox_AutoSender_Interval_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ConnectionTabHelper.CurrentTabData.toolBarSetting.SendAutoSenderInterval = uint.Parse(((TextBox)sender).Text);
+            ConnectionTabHelper.CurrentTabData.ToolBarSetting.SendAutoSenderInterval = uint.Parse(((TextBox)sender).Text);
         }
 
         private void Toggle_Send_Hex_CheckedChange(object sender, RoutedEventArgs e)
         {
-            ConnectionTabHelper.CurrentTabData.toolBarSetting.SendHex = ((ToggleButton)sender).IsChecked.Value;
+            ConnectionTabHelper.CurrentTabData.ToolBarSetting.SendHex = ((ToggleButton)sender).IsChecked.Value;
         }                                        
                                                  
         private void Combo_Send_LineEnding_SelectionChanged(object sender, RoutedEventArgs e)
         {
-            ConnectionTabHelper.CurrentTabData.toolBarSetting.SendLineEnding = (LineEndingItem)((ComboBox)sender).SelectedItem;
+            ConnectionTabHelper.CurrentTabData.ToolBarSetting.SendLineEnding = (LineEndingItem)((ComboBox)sender).SelectedItem;
         }                                        
 
         private void TextBox_Receive_Timeout_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ConnectionTabHelper.CurrentTabData.toolBarSetting.ReceiveTimeOut = uint.Parse(((TextBox)sender).Text);
+            ConnectionTabHelper.CurrentTabData.ToolBarSetting.ReceiveTimeOut = uint.Parse(((TextBox)sender).Text);
         }
 
         private void Combo_Receive_LineEnding_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ConnectionTabHelper.CurrentTabData.toolBarSetting.ReceiveLineEnding = (LineEndingItem)((ComboBox)sender).SelectedItem;
+            ConnectionTabHelper.CurrentTabData.ToolBarSetting.ReceiveLineEnding = (LineEndingItem)((ComboBox)sender).SelectedItem;
         }
         private void Toggle_Receive_ShowTime_CheckedChange(object sender, RoutedEventArgs e)
         {
-            ConnectionTabHelper.CurrentTabData.toolBarSetting.ReceiveShowTime = ((ToggleButton)sender).IsChecked.Value;
+            ConnectionTabHelper.CurrentTabData.ToolBarSetting.ReceiveShowTime = ((ToggleButton)sender).IsChecked.Value;
         }
 
         private void TextBox_Send_Path_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ConnectionTabHelper.CurrentTabData.toolBarSetting.SendPath = ((TextBox)sender).Text;
+            ConnectionTabHelper.CurrentTabData.ToolBarSetting.SendPath = ((TextBox)sender).Text;
         }
 
         private void TextBox_Send_Text_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ConnectionTabHelper.CurrentTabData.toolBarSetting.SendText = ((TextBox)sender).Text;
+            ConnectionTabHelper.CurrentTabData.ToolBarSetting.SendText = ((TextBox)sender).Text;
         }
 
         private void Combo_Receive_DecodeType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ConnectionTabHelper.CurrentTabData.toolBarSetting.ReceiveDecodeType = (DecodingItem)((ComboBox)sender).SelectedItem;
+            ConnectionTabHelper.CurrentTabData.ToolBarSetting.ReceiveDecodeType = (DecodingItem)((ComboBox)sender).SelectedItem;
         }
 
+        //If Setting has already be changed in AdvancedSettingPage , this function will be called
         public void SettingChangedCallBack(object advancePage,bool isChanged)
         {
-            //IPageSetting pageSetting = (IPageSetting)connectionTabHelper.CurrentTabData.ConnectionType.AdvanceSettingsPage;
+            //change icon status
             if (connectionTabHelper.CurrentTabData!= null&&connectionTabHelper.CurrentTabData.Connected && isChanged)
             {
                 Button_Connection_Confirm.IsEnabled = true;

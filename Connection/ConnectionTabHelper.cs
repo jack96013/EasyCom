@@ -32,6 +32,34 @@ namespace EasyCom
         private bool autoNewTab = false;
 
         private int Count = 0;
+        private TabItem previousSelectedTab = null;
+
+        public ConnectionTabData CurrentTabData
+        {
+
+            get
+            {
+                if (TabControl_ReceiveWindow.SelectedItem != null && TabControl_ReceiveWindow.SelectedItem != TabItem_Add)
+                    return ((ConnectionTabItem)TabControl_ReceiveWindow.SelectedItem).connectionTabData;
+                else
+                    return null;
+            }
+        }
+
+        public Page_ConnectionTab ReceivePage { get => receivePage; set => receivePage = value; }
+        public MainWindow CurrentWindow { get => currentWindow; set => currentWindow = value; }
+        public bool AutoNewTab { get => autoNewTab; set => autoNewTab = value; }
+        public ConnectionTabData SelectedTab
+        {
+            get => selectedTab; set
+            {
+                selectedTab = value;
+                TabControl_ReceiveWindow.SelectedItem = selectedTab.TabItem;
+
+            }
+        }
+
+
         public ConnectionTabHelper(MainWindow currentWindow)
         {
             this.CurrentWindow = currentWindow;
@@ -39,23 +67,24 @@ namespace EasyCom
             this.ReceivePage = new Page_ConnectionTab(this);
 
             this.TabControl_ReceiveWindow = currentWindow.TabControl_ReceiveWindow;
-            this.TabControl_ReceiveWindow.Loaded += (s, e) => { this.TabControl_ReceiveWindow.SelectionChanged += TabControl_ReceiveWindow_SelectionChanged; };
+            this.TabControl_ReceiveWindow.Loaded += (s, e) => { };
             ReceivePageFrame.NavigationUIVisibility = System.Windows.Navigation.NavigationUIVisibility.Hidden;
             ReceivePageFrame.Content = ReceivePage;
             TabControl_ReceiveWindow.Items.Add(TabItem_Add);
-            
+
             ReceiveWindowRefreshTimer.Tick += ReceiveWindowRefreshTimer_Tick;
             ReceiveWindowRefreshTimer.Start();
+            this.TabControl_ReceiveWindow.SelectionChanged += TabControl_ReceiveWindow_SelectionChanged;
         }
 
         private void ReceiveWindowRefreshTimer_Tick(object sender, EventArgs e)
         {
-            if (CurrentTabData != null && CurrentTabData.toolBarSetting.ReceiveWindowTextUpdated)
+            if (CurrentTabData != null && CurrentTabData.ToolBarSetting.ReceiveWindowTextUpdated)
             {
                 //Debug.WriteLine(">>>Wait");
                 ReceiveWindowRefreshLock.WaitOne();
                 //Debug.WriteLine(">>>UNLOCKED - RUN");
-                if (!CurrentTabData.toolBarSetting.ReceiveWindowFreeze && CurrentTabData.toolBarSetting.ReceiveWindowTextUpdated)
+                if (!CurrentTabData.ToolBarSetting.ReceiveWindowFreeze && CurrentTabData.ToolBarSetting.ReceiveWindowTextUpdated)
                 {
                     ReceiveWindowRefreshLock_Show.Reset();
                     //  ReceivePage.TextBox_Receive.Text = CurrentTabData.toolBarSetting.ReceiveWindow_Text.ToString();
@@ -63,14 +92,14 @@ namespace EasyCom
                     try
                     {
                         //ReceivePage.TextBox_Test.Text = CurrentTabData.toolBarSetting.ReceiveWindow_Text.ToString();
-                        AddNewText(Color.FromArgb(0,0,0,0), CurrentTabData.toolBarSetting.ReceiveWindowText.ToString());
+                        AddNewText(Color.FromArgb(0, 0, 0, 0), CurrentTabData.ToolBarSetting.ReceiveWindowText.ToString());
 
                         //ReceivePage.Receive_Text.Document = CurrentTabData.toolBarSetting.flowDocument;
-                        CurrentTabData.toolBarSetting.ReceiveWindowTextUpdated = false;
+                        CurrentTabData.ToolBarSetting.ReceiveWindowTextUpdated = false;
                     }
                     catch (Exception k)
                     {
-                        Debug.WriteLine(k.ToString(),"Error");
+                        Debug.WriteLine(k.ToString(), "Error");
                     }
 
                     if (IsVerticalScrollBarAtBottom)
@@ -89,7 +118,7 @@ namespace EasyCom
 
                 this.ReceivePage.TextBox_Receive.Dispatcher.Invoke((Action)delegate
                 {
-                    
+
                     double dVer = this.ReceivePage.TextBox_Test.VerticalOffset;       //獲取豎直滾動條滾動位置
                     double dViewport = this.ReceivePage.TextBox_Test.ViewportHeight;  //獲取豎直可滾動內容高度
                     double dExtent = this.ReceivePage.TextBox_Test.ExtentHeight;      //獲取可視區域的高度
@@ -112,52 +141,52 @@ namespace EasyCom
         {
             if (TabControl_ReceiveWindow.Items.Count == 1)
             {
-                this.currentWindow.Dispatcher.Invoke(() => { NewTabAndFocus(); });
+                this.currentWindow.Dispatcher.Invoke(() => { NewTabAndSelect(); });
 
             }
         }
 
 
-        private ConnectionTabItem previousSelectedTab = null;
         private void TabControl_ReceiveWindow_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
-            if (TabControl_ReceiveWindow.SelectedItem != null)
+            
+            TabItem selectedTab = (TabItem)TabControl_ReceiveWindow.SelectedItem;
+            if (previousSelectedTab != selectedTab)
             {
-                if (TabControl_ReceiveWindow.SelectedItem.Equals(TabItem_Add))
+                Debug.WriteLine(TabControl_ReceiveWindow.Items.Count, "TabSelectionChanged");
+                if (previousSelectedTab is ConnectionTabItem)
                 {
-                    //AutoAppend
+                    ConnectionTabItem previous = previousSelectedTab as ConnectionTabItem; //get the previous tabitem
+                    Debug.WriteLine("Prev : " + previous.Title);
+                    SaveToolBarSettingsForPreviousTab(previous.connectionTabData);
+
+                }
+                if (selectedTab.Equals(TabItem_Add))
+                {
                     if (AutoNewTab)
                     {
                         CurrentWindow.Dispatcher.InvokeAsync(() =>
                         {
-                            NewTabAndFocus();
+                            NewTabAndSelect();
                         });
                     }
                 }
-                else
+                else if (selectedTab is ConnectionTabItem)
                 {
-                    Debug.WriteLine(TabControl_ReceiveWindow.Items.Count, "Normal");
+                    ConnectionTabItem previous = previousSelectedTab as ConnectionTabItem; //get the previous tabitem
 
-                    ConnectionTabItem previous = previousSelectedTab; //get the previous tabitem
 
-                    if (previous != null && previous != TabControl_ReceiveWindow.SelectedItem)
+                    Debug.WriteLine("Next : " + ((ConnectionTabItem)TabControl_ReceiveWindow.SelectedItem).Title);
+                    foreach (ConnectionTabData k in connectionTabDataList)
                     {
-
-
-                        Debug.WriteLine("Prev : " + previous.Title);
-                        SaveToolBarSettingsForPreviousTab(previous.connectionTabData);
-                        Debug.WriteLine("Next : " + ((ConnectionTabItem)TabControl_ReceiveWindow.SelectedItem).Title);
-                        foreach (ConnectionTabData k in connectionTabDataList)
-                        {
-                            k.TabItem.Content = null;
-                        }
-                        CurrentWindow.Dispatcher.InvokeAsync(() => { ((ConnectionTabItem)TabControl_ReceiveWindow.SelectedItem).Content = ReceivePage; });
-                        CurrentWindow.Dispatcher.InvokeAsync(() => previousSelectedTab = (ConnectionTabItem)TabControl_ReceiveWindow.SelectedItem);
-
+                        k.TabItem.Content = null;
                     }
+                    CurrentWindow.Dispatcher.InvokeAsync(() => { ((ConnectionTabItem)TabControl_ReceiveWindow.SelectedItem).Content = ReceivePage; });
+                    previousSelectedTab = (ConnectionTabItem)TabControl_ReceiveWindow.SelectedItem;
                     RestoreToolBarSettingsForCurrentTab();
+
                 }
+                previousSelectedTab = selectedTab;
             }
         }
 
@@ -180,10 +209,10 @@ namespace EasyCom
             return newData;
         }
 
-        public ConnectionTabData NewTabAndFocus()
+        public ConnectionTabData NewTabAndSelect()
         {
             ConnectionTabData newtab = NewTab();
-            newtab.Focus();
+            this.SelectedTab = newtab;
             return newtab;
         }
 
@@ -197,7 +226,7 @@ namespace EasyCom
 
             if (TabControl_ReceiveWindow.Items.Count - 1 == 1)
             {
-                NewTabAndFocus();
+                NewTabAndSelect();
             }
             //If the close item is the last tabitem in tabcontrol,focus on the last item.
             else if (itemIndex != -1 && itemIndex + 1 == TabControl_ReceiveWindow.Items.Count - 1)
@@ -232,11 +261,10 @@ namespace EasyCom
 
         private void SaveToolBarSettingsForPreviousTab(ConnectionTabData PreviousTabData)
         {
-            CurrentTabData.isSelected = false;
-            if (PreviousTabData.toolBarSetting.ConnectionSettings != null && PreviousTabData.ConnectionType.AdvanceSettingsPage != null)
+            if (PreviousTabData.ToolBarSetting.ConnectionSettings != null && PreviousTabData.ConnectionType.AdvanceSettingsPage != null)
             {
                 Debug.WriteLine("Save  " + PreviousTabData.TabItem.Title);
-                ((IPageSetting)PreviousTabData.ConnectionType.AdvanceSettingsPage).GetSetting(PreviousTabData.toolBarSetting.ConnectionSettings);
+                ((IPageSetting)PreviousTabData.ConnectionType.AdvanceSettingsPage).GetSetting(PreviousTabData.ToolBarSetting.ConnectionSettings);
                 //Debug.WriteLine(" Prev"+ PreviousTabData.tabItem.Title);
             }
         }
@@ -249,14 +277,15 @@ namespace EasyCom
         public void RestoreToolBarSettings(ConnectionTabData tabData)
         {
             //CurrentTabData.isSelected = true;
-            tabData.toolBarSetting.ReceiveWindowTextUpdated = true;
+            Debug.WriteLine(CurrentTabData.TabItem.Title, "Restore");
+            if (tabData == null)
+                return;
+            tabData.ToolBarSetting.ReceiveWindowTextUpdated = true;
 
-            Settings.ToolBarSetting toolBarSettings = tabData.toolBarSetting;
-
+            Settings.ToolBarSetting toolBarSettings = tabData.ToolBarSetting;
             CurrentWindow.Button_Connection_Connect_Available = toolBarSettings.Connected;
-
             CurrentWindow.ComboBox_Connection_Type.SelectedIndex = CurrentWindow.Options.ConnectionTypes.IndexOf(tabData.ConnectionType);
-            Debug.WriteLine(CurrentWindow.ComboBox_Connection_Type.SelectedIndex, "Restore");
+
             CurrentWindow.Toggle_Receive_AutoSpilt.IsChecked = toolBarSettings.ReceiveAutoSpilt;
             CurrentWindow.Toggle_Receive_ShowTime.IsChecked = toolBarSettings.ReceiveShowTime;
             CurrentWindow.Combo_Receive_LineEnding.SelectedItem = toolBarSettings.ReceiveLineEnding;
@@ -279,23 +308,22 @@ namespace EasyCom
 
             if (toolBarSettings.ConnectionSettings != null && tabData.ConnectionType != null)
             {
-                Debug.WriteLine("Apply " + CurrentTabData.TabItem.Title);
                 //Restor settings for AdvanceSettingPage 
                 ((IPageSetting)CurrentTabData.ConnectionType.AdvanceSettingsPage).SettingsRestore(toolBarSettings.ConnectionSettings);
                 //Debug.WriteLine("Restore " + CurrentTabData.tabItem.Title);
             }
 
-            
+            Debug.WriteLine("Replace");
             receivePage.PopupDialogHostReceive.ReplaceDialog(toolBarSettings.PopupDialogReceive);
-            
+
         }
 
         public void ShowDialogOnReceiveWindow(ConnectionTabData tab, PopupDialog dialog)
         {
-            
-            if (tab is null)
+
+            if (tab is null || dialog is null)
                 return;
-            tab.toolBarSetting.PopupDialogReceive = dialog;
+            tab.ToolBarSetting.PopupDialogReceive = dialog;
             dialog.WindowStatus = PopupDialog.Status.Show;
             if (CurrentTabData == tab)
             {
@@ -306,36 +334,21 @@ namespace EasyCom
         {
             if (tab is null)
                 return;
-            tab.toolBarSetting.PopupDialogReceive.Close();
-            tab.toolBarSetting.PopupDialogReceive = null;
+            tab.ToolBarSetting.PopupDialogReceive.Close();
+            tab.ToolBarSetting.PopupDialogReceive = null;
         }
 
 
-        public void refreshReceiveWindow()
+        public void RefreshReceiveWindow()
         {
             CurrentWindow.Dispatcher.InvokeAsync(() =>
             {
-                ReceivePage.TextBox_Receive.Text = CurrentTabData.toolBarSetting.ReceiveWindowText.ToString();
+                ReceivePage.TextBox_Receive.Text = CurrentTabData.ToolBarSetting.ReceiveWindowText.ToString();
             });
         }
 
         //開始連線
 
-        public ConnectionTabData CurrentTabData
-        {
-
-            get
-            {
-                if (TabControl_ReceiveWindow.SelectedItem != null && TabControl_ReceiveWindow.SelectedItem != TabItem_Add)
-                    return ((ConnectionTabItem)TabControl_ReceiveWindow.SelectedItem).connectionTabData;
-                else
-                    return null;
-            }
-        }
-
-        public Page_ConnectionTab ReceivePage { get => receivePage; set => receivePage = value; }
-        public MainWindow CurrentWindow { get => currentWindow; set => currentWindow = value; }
-        public bool AutoNewTab { get => autoNewTab; set => autoNewTab = value; }
-        public ConnectionTabData SelectedTab { get => selectedTab; set => selectedTab = value; }
+        
     }
 }

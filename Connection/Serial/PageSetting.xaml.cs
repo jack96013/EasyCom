@@ -128,6 +128,7 @@ namespace EasyCom.Connection.Serial
         {
             Task.Factory.StartNew(() =>
             {
+                Debug.WriteLine("list comport");
                 ProcessPortList.Reset();
                 string[] SerialPortName = SerialPort.GetPortNames();
                 SerialPortName = SerialPortName.Distinct().ToArray();
@@ -189,12 +190,14 @@ namespace EasyCom.Connection.Serial
                                 Console.WriteLine(tab.TabItem.Title);
                                 tab.ConnectionObject.Close();
                                 ConnectionTabHelper tabHelper = mainWindow.ConnectionTabHelper;
-                                PageDialog dialog = new PageDialog();
-                                dialog.InfoTitle = "痾";
-                                dialog.InfoContent = String.Format(CultureInfo.InvariantCulture, "[{0}] 斷線惹...",0);
-                                dialog.Tab = tab;
-                                
-                                
+                                PageDialog dialog = new PageDialog
+                                {
+                                    InfoTitle = "痾",
+                                    InfoContent = String.Format(CultureInfo.InvariantCulture, "[{0}] 斷線惹...", 0),
+                                    Tab = tab
+                                };
+
+
                                 tabHelper.ShowDialogOnReceiveWindow(tab, dialog.PopupDialog);
                             });
                         }
@@ -324,7 +327,7 @@ namespace EasyCom.Connection.Serial
         {
             if (mainWindow.ConnectionTabHelper.CurrentTabData is null)
                 return;
-            Settings settings = (Settings)mainWindow.ConnectionTabHelper.CurrentTabData.toolBarSetting.ConnectionSettings;
+            Settings settings = (Settings)mainWindow.ConnectionTabHelper.CurrentTabData.ToolBarSetting.ConnectionSettings;
             Settings newSettings = new Settings();
             GetSetting(newSettings);
             if (settings != null)
@@ -380,12 +383,15 @@ namespace EasyCom.Connection.Serial
             Task.Factory.StartNew(()=> {
                 ProcessPortList.WaitOne();
                 ComPortItem nextSelect = null;
+                Debug.WriteLine("RESTORE ADV");
                 if (Settings.ComPort != -1)
                 {
                     bool find = false;
                     //尋找Port是否被移除
                     foreach (ComPortItem k in ComboBox_ComPort.Items)
                     {
+                        
+                        
                         if (k.ComID == Settings.ComPort)
                         {
                             nextSelect = k;

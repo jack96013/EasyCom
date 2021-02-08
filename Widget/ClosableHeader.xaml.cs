@@ -61,9 +61,6 @@ namespace EasyCom
             set
             {
                 closeableTabHeader.label_TabTitle.Content = value;
-                //closableTabHeader.Width = 100;
-                //closableTabHeader.label_TabTitle0.Content = "ssssd";
-                Debug.WriteLine("ss" + closeableTabHeader.label_TabTitle.Width);
             }
             get
             {

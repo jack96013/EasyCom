@@ -15,7 +15,7 @@
             <Label x:Name="Label_Title" Content="Title" HorizontalAlignment="Left" Margin="51,13,0,0" VerticalAlignment="Top" FontSize="16"/>
             <Button x:Name="Button_Confirm"  Content="確定" Margin="0,0,10,10" Height="26" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" HorizontalAlignment="Right" Width="60" VerticalAlignment="Bottom"/>
             <Label x:Name="Label_Content" Content="" Margin="51,50,10,41"/>
-            <Button Name="Button_Reconnect" Content="重新連線" HorizontalAlignment="Right" Margin="0,0,80,10" VerticalAlignment="Bottom" Width="60" Height="26" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" RenderTransformOrigin="-0.828,0.526"/>
+            <Button Name="Button_Redo" Content="重新連線" HorizontalAlignment="Right" Margin="0,0,80,10" VerticalAlignment="Bottom" Width="60" Height="26" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" RenderTransformOrigin="-0.828,0.526"/>
 
             <!--<Border Padding="0" BorderThickness="1" Margin="62,0,0,10" HorizontalAlignment="Left" Width="278" Height="96" VerticalAlignment="Bottom" BorderBrush="#4C000000">
             <TextBox HorizontalAlignment="Left" TextWrapping="Wrap" Text="TextBox0000" Width="278" Padding="0,-24,0,0" Margin="0" AcceptsReturn="True"/>

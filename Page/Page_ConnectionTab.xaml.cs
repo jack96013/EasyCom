@@ -183,14 +183,14 @@ namespace EasyCom
         {
             PageCutstomCommandDialog customCommandDialog = new PageCutstomCommandDialog();
             customCommandDialog.Data = new CustomStrData("", "", "");
-            PopupDialog dialog = new PopupDialog(customCommandDialog);
-            PopupDialogHostTools.CurrentDialog = dialog;
-            dialog.OnConfirm=(s,arg) => {
+
+            customCommandDialog.PopupDialog.OnConfirm=(s,arg) => {
                 ((CustomStrTab)Combo_CustomStrTab.SelectedItem).StrList.Add(customCommandDialog.Data);
                 ListBox_CustomStr_Refresh();
             };
 
-            PopupDialogHostTools.Show();
+            PopupDialogHostTools.Show(customCommandDialog.PopupDialog);
+            
 
         }
 

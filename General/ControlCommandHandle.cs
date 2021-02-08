@@ -30,11 +30,11 @@ namespace EasyCom
             StartUp = true;
             if (startUpArgs.Count != 0)
             {
-
                 ConnectionTabHelper.AutoNewTab = false;
                 ParseFinishCB = () =>
                 {
-                    this.mainWindow.Dispatcher.InvokeAsync(() => { SelectedConnectionTab?.Focus(); }); //focus and restore toolbar settings
+                    this.mainWindow.Dispatcher.InvokeAsync(() => { SelectedConnectionTab?.Focus(); 
+                    }); //focus and restore toolbar settings
                     ParseFinishCB = null;
                     ConnectionTabHelper.OneTabExistCheck();
                     ConnectionTabHelper.AutoNewTab = true;
@@ -44,6 +44,7 @@ namespace EasyCom
                         task.Invoke();
                     }
                     TaskRunAfterStartUpList.Clear();
+                    StartUp = false;
                 };
                 this.CommandsParse(startUpArgs);
                 
@@ -53,8 +54,9 @@ namespace EasyCom
             {
                 ConnectionTabHelper.AutoNewTab = true;
                 ConnectionTabHelper.OneTabExistCheck();
+                StartUp = false;
             }
-            StartUp = false;
+            
 
         }
 
@@ -76,7 +78,7 @@ namespace EasyCom
         public void CommandParse(string key, string value)
         {
             CommandExe(key, value);
-            mainWindow.Dispatcher.Invoke(() => { ((IPageSetting)SelectedConnectionTab.ConnectionType.AdvanceSettingsPage).SettingsRestore(SelectedConnectionTab.toolBarSetting.ConnectionSettings); });
+            mainWindow.Dispatcher.Invoke(() => { ((IPageSetting)SelectedConnectionTab.ConnectionType.AdvanceSettingsPage).SettingsRestore(SelectedConnectionTab.ToolBarSetting.ConnectionSettings); });
         }
 
         private void CommandExe(string key, string value)
@@ -145,12 +147,14 @@ namespace EasyCom
                         Debug.WriteLine("NewTab");
                         connection = ConnectionTabHelper.NewTab();
                         connection.TabItem.Title = "ArduBlockly";
-                        connection.toolBarSetting.SendText = "測試";
+                        connection.ToolBarSetting.SendText = "測試";
                         SelectedConnectionTab = connection;
                         SelectedConnectionTab.ConnectionTypeChoose(0);
+
                     });
                 }
-                ((Connection.Serial.Settings)SelectedConnectionTab.toolBarSetting.ConnectionSettings).ComPort = int.Parse(value);
+                ((Connection.Serial.Settings)SelectedConnectionTab.ToolBarSetting.ConnectionSettings).ComPort = int.Parse(value);
+                Debug.WriteLine("set comport");
             }
 
             else if (StrCompare(key, "disconnect"))
@@ -159,12 +163,8 @@ namespace EasyCom
             }
             else if (StrCompare(key, "connect"))
             {
-                
-                if (StartUp)
-                    TaskRunAfterStartUpList.Add(()=> {mainWindow.Dispatcher.Invoke(() => { SelectedConnectionTab.Connect(); }); });
-                else
-                    mainWindow.Dispatcher.Invoke(() => { SelectedConnectionTab.Connect(); });
-                
+                Debug.WriteLine("Connect");
+                mainWindow.Dispatcher.Invoke(() => { SelectedConnectionTab.Connect(); });
             }
             else if (StrCompare(key, "text"))
             {

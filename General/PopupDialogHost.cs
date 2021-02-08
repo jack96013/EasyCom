@@ -30,11 +30,11 @@ namespace EasyCom.General
             }
             set
             {
-                if (value != dialog)
-                    ;
-                dialog = value;
-                dialog.PopUpDialogHost = this;
-
+                if (value != null)
+                {
+                    dialog = value;
+                    dialog.PopUpDialogHost = this;
+                }
             }
         }
 
@@ -66,7 +66,7 @@ namespace EasyCom.General
 
         private void PopUpAnimInit()
         {
-            Duration defaultDuration = new Duration(TimeSpan.FromSeconds(100));
+            Duration defaultDuration = new Duration(TimeSpan.FromSeconds(1));
             ScaleIn = new Storyboard();
             ScaleOut = new Storyboard();
             ScaleTransform Orig = new ScaleTransform();
@@ -121,14 +121,16 @@ namespace EasyCom.General
                 Close(CurrentDialog);
             }
             CurrentDialog = dialog;
+            
             foreach (DoubleAnimation animation in ScaleIn.Children)
             {
-                animation.Duration = new Duration(TimeSpan.FromMilliseconds(CurrentDialog.ScaleAnimationSpeed));
+                animation.Duration = new Duration(CurrentDialog.ScaleAnimationTime);
             }
             foreach (DoubleAnimation animation in ScaleOut.Children)
             {
-                animation.Duration = new Duration(TimeSpan.FromMilliseconds(CurrentDialog.ScaleAnimationSpeed));
+                animation.Duration = new Duration(CurrentDialog.ScaleAnimationTime);
             }
+
             CurrentDialog.WindowStatus = PopupDialog.Status.Show;
             CurrentDialog.Page.OnLoaded();
             CurrentDialog.OnOpenInvoke();
@@ -218,8 +220,26 @@ namespace EasyCom.General
                 return;
             if (dialog.WindowStatus == PopupDialog.Status.Close)
                 return;
+            //ScaleIn.Begin();
             CurrentDialog = dialog;
+            ChangeAnimationDuration(CurrentDialog.ScaleAnimationTime);
+            ScaleIn.Begin();
+            ScaleIn.Seek(CurrentDialog.ScaleAnimationTime);
+            
+
             ShowFrame();
+        }
+
+        private void ChangeAnimationDuration(TimeSpan span)
+        {
+            foreach (DoubleAnimation animation in ScaleIn.Children)
+            {
+                animation.Duration = new Duration(span);
+            }
+            foreach (DoubleAnimation animation in ScaleOut.Children)
+            {
+                animation.Duration = new Duration(span);
+            }
         }
     }
 }

@@ -10,8 +10,12 @@ namespace EasyCom.Connection.Serial
     {
         public void CommandHandle(string key, string value, string report)
         {
+            Settings ConnectionSettings = (Settings)currentTab.ToolBarSetting.ConnectionSettings;
+            if (key is null)
+                return;
             if (key.Equals("sercfg", StringComparison.InvariantCulture))
             {
+                
                 //19200,8,n,1,N
 
                 //@"([0-9]+),([5-8]),([noems]),(1|1\.5|2),([NXRD])"
@@ -36,7 +40,7 @@ namespace EasyCom.Connection.Serial
                         ConnectionSettings.DataBits = (BasicItem<ushort>)optionResult;
                     }
                     else
-                        resultStr.Append(string.Format(wrongArgumentStr, "Data Bits", cmpResult.Groups[2].Value));
+                        resultStr.Append(string.Format(CultureInfo.InvariantCulture,wrongArgumentStr, "Data Bits", cmpResult.Groups[2].Value));
 
 
                     optionResult = options.ParityList.getOptionByName(cmpResult.Groups[3].Value);
@@ -45,7 +49,7 @@ namespace EasyCom.Connection.Serial
                         ConnectionSettings.Parity = (BasicItem<System.IO.Ports.Parity>)optionResult;
                     }
                     else
-                        resultStr.Append(string.Format(wrongArgumentStr, "Parity", cmpResult.Groups[3].Value));
+                        resultStr.Append(string.Format(CultureInfo.InvariantCulture,wrongArgumentStr, "Parity", cmpResult.Groups[3].Value));
 
                     optionResult = options.StopBitsList.getOptionByName(cmpResult.Groups[4].Value);
                     if (optionResult != null)
@@ -53,7 +57,7 @@ namespace EasyCom.Connection.Serial
                         ConnectionSettings.StopBits = (BasicItem<System.IO.Ports.StopBits>)optionResult;
                     }
                     else
-                        resultStr.Append(string.Format(wrongArgumentStr, "Stop Bit", cmpResult.Groups[4].Value));
+                        resultStr.Append(string.Format(CultureInfo.InvariantCulture,wrongArgumentStr, "Stop Bit", cmpResult.Groups[4].Value));
 
                     optionResult = options.HandshakeList.getOptionByName(cmpResult.Groups[5].Value);
                     if (optionResult != null)
@@ -61,7 +65,7 @@ namespace EasyCom.Connection.Serial
                         ConnectionSettings.Handshake = (BasicItem<System.IO.Ports.Handshake>)optionResult;
                     }
                     else
-                        resultStr.Append(string.Format(wrongArgumentStr, "Handshake", cmpResult.Groups[5].Value));
+                        resultStr.Append(string.Format(CultureInfo.InvariantCulture,wrongArgumentStr, "Handshake", cmpResult.Groups[5].Value));
 
                     /*
                     Console.WriteLine(resultStr);
@@ -78,17 +82,24 @@ namespace EasyCom.Connection.Serial
             }
             else if (key.Equals("dtr", StringComparison.InvariantCulture))
             {
-                if (value.Equals("1", StringComparison.InvariantCulture))
-                    ConnectionSettings.DTREnable = true;
-                else
-                    ConnectionSettings.DTREnable = false;
+                if (value != null)
+                {
+                    if (value.Equals("1", StringComparison.InvariantCulture))
+                        ConnectionSettings.DTREnable = true;
+                    else
+                        ConnectionSettings.DTREnable = false;
+                }
+                
             }
             else if (key.Equals("rts", StringComparison.InvariantCulture))
             {
-                if (value.Equals("1", StringComparison.InvariantCulture))
-                    ConnectionSettings.RTSEnable = true;
-                else
-                    ConnectionSettings.RTSEnable = false;
+                if (value != null)
+                {
+                    if (value.Equals("1", StringComparison.InvariantCulture))
+                        ConnectionSettings.RTSEnable = true;
+                    else
+                        ConnectionSettings.RTSEnable = false;
+                }
             }
         }
     }

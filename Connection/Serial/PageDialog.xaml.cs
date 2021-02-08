@@ -55,6 +55,7 @@ namespace EasyCom
             }
         }
 
+        public Action ButtonRedoAction { get; set; } = null;
         public PageDialog()
         {
             InitializeComponent();
@@ -62,12 +63,12 @@ namespace EasyCom
 
             this.Button_Confirm.Click += Button_Confirm_Click;
             this.Button_Cancel.Click += Button_Cancel_Click;
-            this.Button_Reconnect.Click += Button_Reconnect_Click;
+            this.Button_Redo.Click += Button_Redo_Click;
         }
 
-        private void Button_Reconnect_Click(object sender, RoutedEventArgs e)
+        private void Button_Redo_Click(object sender, RoutedEventArgs e)
         {
-            Tab?.Connect();
+            ButtonRedoAction?.Invoke();
             PopupDialog.Close();
         }
 

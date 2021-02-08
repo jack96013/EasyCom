@@ -28,6 +28,9 @@ namespace EasyCom.Settings
         public StringBuilder ReceiveWindowText { get; set; }
         public FlowDocument FlowDocument { get ; set ; }
         public PopupDialog PopupDialogReceive { get; set; }
-
+        public ToolBarSetting ShallowCopy()
+        {
+            return (ToolBarSetting)this.MemberwiseClone();
+        }
     }
 }

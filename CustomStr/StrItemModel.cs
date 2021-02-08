@@ -36,11 +36,6 @@
             }
         }
 
-        public void ClearIndicator()
-        {
-            DragIndicatorUp = false;
-            DragIndicatorDown = false;
-        }
         public bool PreviewMode { get; set; } = false;
     }
 
