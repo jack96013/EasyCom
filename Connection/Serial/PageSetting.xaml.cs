@@ -193,10 +193,12 @@ namespace EasyCom.Connection.Serial
                                 PageDialog dialog = new PageDialog
                                 {
                                     InfoTitle = "痾",
-                                    InfoContent = String.Format(CultureInfo.InvariantCulture, "[{0}] 斷線惹...", 0),
+                                    InfoContent = String.Format(CultureInfo.InvariantCulture, "{0} 斷線惹...", DateTime.Now.ToString("[MM H:mm:ss.fff]", CultureInfo.InvariantCulture)),
                                     Tab = tab
                                 };
-
+                                dialog.ButtonRedoAction = () => {
+                                    tab.ReConnect();
+                                };
                                 tabHelper.ShowDialogOnReceiveWindow(tab, dialog.PopupDialog);
                             });
                         }
