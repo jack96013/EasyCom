@@ -101,8 +101,6 @@ namespace EasyCom
         public ConnectionTabItem TabItem { get => tabItem; set => tabItem = value; }
         public bool SaveSettingFromAdvancedSettingPage()
         {
-            Console.Write("dsa ");
-            Console.WriteLine(((Connection.Serial.Settings)ToolBarSetting.ConnectionSettings).Baudrate);
             bool a = SaveSettingFromAdvancedSettingPage(ToolBarSetting.ConnectionSettings);
             return a;
         }
@@ -120,15 +118,17 @@ namespace EasyCom
 
         public void Connect()
         {
+            if (ConnectionObject is null || ConnectionObject.GetType()!=ConnectionType.ConnectionObjectType)
+                CreateConnectionInstance();
             ConnectionObject.Open();
         }
 
         public bool ApplySetting()
         {
-            object newConnectionSetting;
-            object originalConnectionSetting = ToolBarSetting.ConnectionSettings;
+            IConnectionSettings newConnectionSetting;
+            IConnectionSettings originalConnectionSetting = ToolBarSetting.ConnectionSettings;
             Type t = ((IPageSetting)connectionType.AdvanceSettingsPage).settingsStructType;
-            newConnectionSetting = Activator.CreateInstance(t);
+            newConnectionSetting = Activator.CreateInstance(t) as IConnectionSettings;
             if (!SaveSettingFromAdvancedSettingPage(newConnectionSetting))
             {
                 return false;
@@ -170,7 +170,7 @@ namespace EasyCom
             if (ConnectionTypeIndex != -1)
             {
                 CreateConnectionSettingsInstance(parentWindow.Options.ConnectionTypes.ElementAt(ConnectionTypeIndex));
-                CreateConnectionInstance();
+                //CreateConnectionInstance();
             }
         }
 
@@ -189,7 +189,7 @@ namespace EasyCom
                 if (ToolBarSetting.ConnectionSettings == null || ToolBarSetting.ConnectionSettings.GetType() != t)
                 {
                     Debug.WriteLine("CreateNewSetting " + TabItem.Title);
-                    ToolBarSetting.ConnectionSettings = Activator.CreateInstance(t);
+                    ToolBarSetting.ConnectionSettings = Activator.CreateInstance(t) as IConnectionSettings;
 
                     Debug.WriteLine("Set Default");
                     ((IPageSetting)connectionType.AdvanceSettingsPage).SetSettingDefault(ToolBarSetting.ConnectionSettings);
@@ -204,7 +204,6 @@ namespace EasyCom
             if (ConnectionObject != null)
             {
                 ConnectionObject.Close();
-                
             }
         }
 
@@ -229,9 +228,8 @@ namespace EasyCom
             TabItem.Available = false;
             parentWindow.Button_Connection_Connect_Available = false;
             ToolBarSetting.Connected = false;
-            //CurrentWindow.Frame_Connection_Setting.IsEnabled = true;
-            //CurrentWindow.Button_Connection_Connect.Content = "連線";
-            //Connected = false;
+
+            
         }
 
         public void ApplyOnFail()

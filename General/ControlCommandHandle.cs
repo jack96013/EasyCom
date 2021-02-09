@@ -222,7 +222,7 @@ namespace EasyCom
             else
             {
                 if (SelectedConnectionTab != null)
-                    SelectedConnectionTab.ConnectionObject.CommandHandle(key, value, report);
+                    SelectedConnectionTab.ToolBarSetting.ConnectionSettings.Parse(key, value, report);
             }
         }
 

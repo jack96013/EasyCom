@@ -13,7 +13,6 @@ namespace EasyCom
         void Open();
         void Close();
         void SendData(byte[] data);
-        void CommandHandle(string key, string value, string report);
         bool AllowApplySettingsWithoutClose { get; }
         bool ApplySettings();
         

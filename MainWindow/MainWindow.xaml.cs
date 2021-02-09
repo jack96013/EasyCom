@@ -211,12 +211,15 @@ namespace EasyCom
             if (ConnectionTabHelper.CurrentTabData.Connected)
             {
                 ConnectionTabHelper.CurrentTabData.Disconnect();
+                
             }
             else
             {
                 ConnectionTabHelper.CurrentTabData.SaveSettingFromAdvancedSettingPage();
                 ConnectionTabHelper.CurrentTabData.Connect();
+                Debug.WriteLine(ConnectionTabHelper.CurrentTabData.Connected, "Connected2:");
             }
+            
         }
         public bool Button_Connection_Connect_Available
         {
@@ -253,14 +256,12 @@ namespace EasyCom
         }
         private void Connection_Type_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //Task.Run(() => { while (true) { this.Dispatcher.Invoke(()=> { Debug.WriteLine(ConnectionTabHelper.CurrentTabData, "test"); }); Thread.Sleep(100); } });
             int SelectedIndex = ComboBox_Connection_Type.SelectedIndex;
-            //connectionTabHelper.CurrentTabData.toolBarSetting.Connection_Select = SelectedIndex;
+            
             ConnectionTabHelper.CurrentTabData?.ConnectionTypeChoose(SelectedIndex);
             if (SelectedIndex != -1)
             {
                 ConnectionType connectionType = Options.ConnectionTypes.ElementAt(SelectedIndex);
-                //setConnectionType(this.ComboBox_Connection_Type.SelectedIndex);
                 this.Frame_Connection_Setting.Content = connectionType.AdvanceSettingsPage;
                 if (connectionType.AdvanceSettingsPage != null)
                 {
@@ -277,7 +278,6 @@ namespace EasyCom
                 this.Frame_Connection_Setting.Content = null;
                 this.Button_Connection_Connect.IsEnabled = false;
             }
-            
         }
 
         private void Button_Close_Click(object sender, RoutedEventArgs e)

@@ -6,11 +6,14 @@ using System.Text.RegularExpressions;
 
 namespace EasyCom.Connection.Serial
 {
-    public partial class SerialHelper
+    public class Command
     {
-        public void CommandHandle(string key, string value, string report)
+        public static void Prase(object setting,string key, string value, string report)
         {
-            Settings ConnectionSettings = (Settings)currentTab.ToolBarSetting.ConnectionSettings;
+            if (!(setting is Settings))
+                return;
+
+            Settings ConnectionSettings = (Settings)setting;
             if (key is null)
                 return;
             if (key.Equals("sercfg", StringComparison.InvariantCulture))

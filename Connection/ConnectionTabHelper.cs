@@ -81,9 +81,7 @@ namespace EasyCom
         {
             if (CurrentTabData != null && CurrentTabData.ToolBarSetting.ReceiveWindowTextUpdated)
             {
-                //Debug.WriteLine(">>>Wait");
                 ReceiveWindowRefreshLock.WaitOne();
-                //Debug.WriteLine(">>>UNLOCKED - RUN");
                 if (!CurrentTabData.ToolBarSetting.ReceiveWindowFreeze && CurrentTabData.ToolBarSetting.ReceiveWindowTextUpdated)
                 {
                     ReceiveWindowRefreshLock_Show.Reset();
@@ -142,7 +140,6 @@ namespace EasyCom
             if (TabControl_ReceiveWindow.Items.Count == 1)
             {
                 this.currentWindow.Dispatcher.Invoke(() => { NewTabAndSelect(); });
-
             }
         }
 
@@ -263,28 +260,34 @@ namespace EasyCom
         {
             if (PreviousTabData.ToolBarSetting.ConnectionSettings != null && PreviousTabData.ConnectionType.AdvanceSettingsPage != null)
             {
-                Debug.WriteLine("Save  " + PreviousTabData.TabItem.Title);
-                ((IPageSetting)PreviousTabData.ConnectionType.AdvanceSettingsPage).GetSetting(PreviousTabData.ToolBarSetting.ConnectionSettings);
-                //Debug.WriteLine(" Prev"+ PreviousTabData.tabItem.Title);
+                Debug.WriteLine("Save " + PreviousTabData.TabItem.Title);
+                //((IPageSetting)PreviousTabData.ConnectionType.AdvanceSettingsPage).GetSetting(PreviousTabData.ToolBarSetting.ConnectionSettings);
             }
         }
-
+        /// <summary>
+        /// Save toolbar settings to current tab
+        /// </summary>
         public void RestoreToolBarSettingsForCurrentTab()
         {
             RestoreToolBarSettings(CurrentTabData);
         }
-
+        /// <summary>
+        /// Save toolbar settings
+        /// </summary>
+        /// <param name="tabData"></param>
         public void RestoreToolBarSettings(ConnectionTabData tabData)
         {
             //CurrentTabData.isSelected = true;
             Debug.WriteLine(CurrentTabData.TabItem.Title, "Restore");
+            
             if (tabData == null)
                 return;
             tabData.ToolBarSetting.ReceiveWindowTextUpdated = true;
 
             Settings.ToolBarSetting toolBarSettings = tabData.ToolBarSetting;
+            
             CurrentWindow.Button_Connection_Connect_Available = toolBarSettings.Connected;
-            CurrentWindow.ComboBox_Connection_Type.SelectedIndex = CurrentWindow.Options.ConnectionTypes.IndexOf(tabData.ConnectionType);
+            
 
             CurrentWindow.Toggle_Receive_AutoSpilt.IsChecked = toolBarSettings.ReceiveAutoSpilt;
             CurrentWindow.Toggle_Receive_ShowTime.IsChecked = toolBarSettings.ReceiveShowTime;
@@ -297,9 +300,9 @@ namespace EasyCom
             CurrentWindow.Toggle_Send_ShowOnReceive.IsChecked = toolBarSettings.SendShowOnReceive;
 
             CurrentWindow.CheckBox_AutoSender_Enable.IsChecked = toolBarSettings.SendAutoSenderEnable;
-            CurrentWindow.TextBox_AutoSender_Interval.Text = toolBarSettings.SendAutoSenderInterval.ToString();
+            CurrentWindow.TextBox_AutoSender_Interval.Text = toolBarSettings.SendAutoSenderInterval.ToString(CultureInfo.InvariantCulture);
             CurrentWindow.CheckBox_AutoSender_AmountEnable.IsChecked = toolBarSettings.SendAutoSenderAmountEnable;
-            CurrentWindow.TextBox_AutoSender_Amount.Text = toolBarSettings.SendAutoSenderAmount.ToString();
+            CurrentWindow.TextBox_AutoSender_Amount.Text = toolBarSettings.SendAutoSenderAmount.ToString(CultureInfo.InvariantCulture);
 
             CurrentWindow.TextBox_Send_Text.Text = toolBarSettings.SendText;
             CurrentWindow.TextBox_Send_Path.Text = toolBarSettings.SendPath;
@@ -309,13 +312,13 @@ namespace EasyCom
             if (toolBarSettings.ConnectionSettings != null && tabData.ConnectionType != null)
             {
                 //Restor settings for AdvanceSettingPage 
+                Debug.WriteLine(CurrentTabData.TabItem.Title, "Restore Connection Setting");
                 ((IPageSetting)CurrentTabData.ConnectionType.AdvanceSettingsPage).SettingsRestore(toolBarSettings.ConnectionSettings);
-                //Debug.WriteLine("Restore " + CurrentTabData.tabItem.Title);
+                Debug.WriteLine(((Connection.Serial.Settings)toolBarSettings.ConnectionSettings).ComPort, "PORT");
             }
+            CurrentWindow.ComboBox_Connection_Type.SelectedItem = tabData.ConnectionType;
 
-            Debug.WriteLine("Replace");
             receivePage.PopupDialogHostReceive.ReplaceDialog(toolBarSettings.PopupDialogReceive);
-
         }
 
         public void ShowDialogOnReceiveWindow(ConnectionTabData tab, PopupDialog dialog)

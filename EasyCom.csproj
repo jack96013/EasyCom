@@ -130,6 +130,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Connection\ConnectionType.cs" />
+    <Compile Include="Connection\IConnectionSettings.cs" />
     <Compile Include="Connection\IConnectionCommand.cs" />
     <Compile Include="Connection\Serial\PageDialog.xaml.cs">
       <DependentUpon>PageDialog.xaml</DependentUpon>

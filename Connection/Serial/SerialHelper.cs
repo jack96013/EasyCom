@@ -34,7 +34,7 @@ namespace EasyCom.Connection.Serial
 
             toolBarSettings = currentTab.ToolBarSetting;
             currentTab.ToolBarSetting.ConnectionSettings = (Settings)toolBarSettings.ConnectionSettings;
-            
+            Debug.WriteLine(this.GetHashCode(),"Serial Create");
             //SerialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
         }
 

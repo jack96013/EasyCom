@@ -197,7 +197,6 @@ namespace EasyCom.Connection.Serial
                                     Tab = tab
                                 };
 
-
                                 tabHelper.ShowDialogOnReceiveWindow(tab, dialog.PopupDialog);
                             });
                         }
@@ -205,8 +204,6 @@ namespace EasyCom.Connection.Serial
                 }
                 //Append to list
                 this.Dispatcher.InvokeAsync((() => {
-
-
                     int newIndex=-1;
                     if (ComboBox_ComPort.SelectedIndex != -1)
                     {
@@ -231,13 +228,10 @@ namespace EasyCom.Connection.Serial
 
                     ComboBox_ComPort_Refresh();
                     ComboBox_ComPort.SelectedIndex = newIndex;
-
                 }));
                 ProcessPortList.Set();
                 
             }, cancellationToken: CancellationToken.None, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default);
-
-
         }
 
         public void RefreshComPort(object sender, RoutedEventArgs e)
@@ -277,9 +271,6 @@ namespace EasyCom.Connection.Serial
                 this.Button_BaudrateEdit.Visibility = Visibility.Collapsed;
                 ComboBox_Baudrate_lastSelectedIndex = ComboBox_Baudrate.SelectedIndex;
             }
-                
-            //MessageBox.Show("乾00000");
-            //
 
             CheckSettingsBeFinished();
         }
@@ -383,15 +374,13 @@ namespace EasyCom.Connection.Serial
             Task.Factory.StartNew(()=> {
                 ProcessPortList.WaitOne();
                 ComPortItem nextSelect = null;
-                Debug.WriteLine("RESTORE ADV");
+                Debug.WriteLine(Settings.ComPort, "RESTORE ADV");
                 if (Settings.ComPort != -1)
                 {
                     bool find = false;
                     //尋找Port是否被移除
                     foreach (ComPortItem k in ComboBox_ComPort.Items)
                     {
-                        
-                        
                         if (k.ComID == Settings.ComPort)
                         {
                             nextSelect = k;
@@ -402,12 +391,10 @@ namespace EasyCom.Connection.Serial
                     //Port had been removed
                     if (!find)
                     {
-                        Debug.WriteLine("OLD : " + Settings.ComPort);
                         ComPortItem old = new ComPortItem(Settings.ComPort, null);
                         old.Removed = true;
                         ComPortList.Add(old);
                         mainWindow.Dispatcher.Invoke(()=> { ComboBox_ComPort_Refresh(); });
-                        
                         nextSelect = old;
                     }
                 }
@@ -415,8 +402,6 @@ namespace EasyCom.Connection.Serial
                 {
                     ComboBox_ComPort.SelectedItem = nextSelect;
                 });
-                
-                
             }, cancellationToken: CancellationToken.None, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default);
         }
 
@@ -427,7 +412,6 @@ namespace EasyCom.Connection.Serial
             if (ComboBox_ComPort.SelectedItem != null)
             {
                 Settings.ComPort = ((ComPortItem)ComboBox_ComPort.SelectedItem).ComID;
-                
             }
             else
             {
