@@ -18,6 +18,7 @@ namespace EasyCom
         private ConnectionTabItem tabItem = null;
         private ConnectionType connectionType = null;
         public IConnection ConnectionObject { get; set; }=null;
+        public IConnectionSettings ConnectionSettings { get; set; } //For Connected ConnectionObject
 
         public ToolBarSetting ToolBarSetting { get; set; } = new ToolBarSetting();
 
@@ -102,6 +103,7 @@ namespace EasyCom
         public bool SaveSettingFromAdvancedSettingPage()
         {
             bool a = SaveSettingFromAdvancedSettingPage(ToolBarSetting.ConnectionSettings);
+            Console.WriteLine(((Connection.Serial.Settings)ToolBarSetting.ConnectionSettings).Info());
             return a;
         }
         private bool SaveSettingFromAdvancedSettingPage(object setting)
@@ -118,6 +120,8 @@ namespace EasyCom
 
         public void Connect()
         {
+            ConnectionSettings = ToolBarSetting.ConnectionSettings;
+            Console.WriteLine(((Connection.Serial.Settings)ConnectionSettings).Info()); 
             if (ConnectionObject is null || ConnectionObject.GetType()!=ConnectionType.ConnectionObjectType)
                 CreateConnectionInstance();
             ConnectionObject.Open();
@@ -126,29 +130,29 @@ namespace EasyCom
         public bool ApplySetting()
         {
             IConnectionSettings newConnectionSetting;
-            IConnectionSettings originalConnectionSetting = ToolBarSetting.ConnectionSettings;
+            IConnectionSettings originalConnectionSetting = ConnectionSettings;
             Type t = ((IPageSetting)connectionType.AdvanceSettingsPage).settingsStructType;
             newConnectionSetting = Activator.CreateInstance(t) as IConnectionSettings;
             if (!SaveSettingFromAdvancedSettingPage(newConnectionSetting))
             {
                 return false;
             }
-            ToolBarSetting.ConnectionSettings = newConnectionSetting;
+            ConnectionSettings = newConnectionSetting;
             bool needClose = !ConnectionObject.AllowApplySettingsWithoutClose;
             if (needClose)
                 ConnectionObject.Close();
+
             bool applySuccessful = ConnectionObject.ApplySettings();
             if (!needClose)
             {
                 if (!applySuccessful)
                 {
-                    ToolBarSetting.ConnectionSettings = originalConnectionSetting;
+                    ConnectionSettings = originalConnectionSetting;
                 }
             }
             else
                 ConnectionObject.Open();
             return applySuccessful;
-            
         }
 
         public void ReConnect()
@@ -170,7 +174,6 @@ namespace EasyCom
             if (ConnectionTypeIndex != -1)
             {
                 CreateConnectionSettingsInstance(parentWindow.Options.ConnectionTypes.ElementAt(ConnectionTypeIndex));
-                //CreateConnectionInstance();
             }
         }
 
@@ -194,7 +197,7 @@ namespace EasyCom
                     Debug.WriteLine("Set Default");
                     ((IPageSetting)connectionType.AdvanceSettingsPage).SetSettingDefault(ToolBarSetting.ConnectionSettings);
                 }
-                //((IPageSetting)connectionType.AdvanceSettingsPage).SettingsRestore(toolBarSetting.ConnectionSettings);
+                ((IPageSetting)connectionType.AdvanceSettingsPage).SettingsRestore(ToolBarSetting.ConnectionSettings);
             }
         }
 
@@ -234,7 +237,7 @@ namespace EasyCom
 
         public void ApplyOnFail()
         {
-            parentWindow.SettingChangedCallBack(null,true);
+            parentWindow.SettingChangedCallBack(true);
         }
 
         public void onError()
@@ -244,7 +247,14 @@ namespace EasyCom
 
         public void ShowData(byte[] data,DateTime time)
         {
-            String ConvertedData = Encoding.UTF8.GetString(data);
+            //String ConvertedData = Encoding.UTF8.GetString(data);
+            String ConvertedData = "";
+            if (ToolBarSetting.ReceiveDecodeType.Name == "HEX")
+            {
+                ConvertedData = BitConverter.ToString(data).Replace("-", " ");
+            }
+            else
+                ConvertedData = ToolBarSetting.ReceiveDecodeType.Value.GetString(data);
             AppendTextToReceiveWindow(true,ConvertedData,time);
 
         }
@@ -253,6 +263,10 @@ namespace EasyCom
         {
             if (ConnectionObject != null && ConnectionObject.Connected)
             {
+                if (ToolBarSetting.SendLineEnding.Value != null)
+                {
+                    data += ToolBarSetting.SendLineEnding.Value;
+                }
                 byte[] dataBytes = Encoding.UTF8.GetBytes(data);
                 ToolBarSetting.ReceiveWindowTextUpdated = true;
                 ConnectionObject.SendData(dataBytes);

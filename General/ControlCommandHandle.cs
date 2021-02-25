@@ -33,12 +33,12 @@ namespace EasyCom
                 ConnectionTabHelper.AutoNewTab = false;
                 ParseFinishCB = () =>
                 {
-                    this.mainWindow.Dispatcher.InvokeAsync(() => { SelectedConnectionTab?.Focus(); 
+                    this.mainWindow.Dispatcher.InvokeAsync(() => { SelectedConnectionTab?.Focus();
                     }); //focus and restore toolbar settings
                     ParseFinishCB = null;
                     ConnectionTabHelper.OneTabExistCheck();
                     ConnectionTabHelper.AutoNewTab = true;
-                    
+
                     foreach (Action task in TaskRunAfterStartUpList)
                     {
                         task.Invoke();
@@ -47,7 +47,7 @@ namespace EasyCom
                     StartUp = false;
                 };
                 this.CommandsParse(startUpArgs);
-                
+
 
             }
             else
@@ -56,7 +56,7 @@ namespace EasyCom
                 ConnectionTabHelper.OneTabExistCheck();
                 StartUp = false;
             }
-            
+
 
         }
 
@@ -64,7 +64,7 @@ namespace EasyCom
         {
             Task.Run(() =>
             {
-                
+
                 foreach (KeyValuePair<string, string> keyValuePair in keyValuePairs)
                 {
                     CommandExe(keyValuePair.Key, keyValuePair.Value);
@@ -72,13 +72,19 @@ namespace EasyCom
                 }
 
                 ParseFinishCB?.Invoke();
-                
+
             });
         }
         public void CommandParse(string key, string value)
         {
             CommandExe(key, value);
-            mainWindow.Dispatcher.Invoke(() => { ((IPageSetting)SelectedConnectionTab.ConnectionType.AdvanceSettingsPage).SettingsRestore(SelectedConnectionTab.ToolBarSetting.ConnectionSettings); });
+            if (SelectedConnectionTab is null)
+                return;
+            else
+                mainWindow.Dispatcher.Invoke(() => {
+                    if (SelectedConnectionTab.ConnectionType != null)
+                        ((IPageSetting)SelectedConnectionTab.ConnectionType.AdvanceSettingsPage).SettingsRestore(SelectedConnectionTab.ToolBarSetting.ConnectionSettings);
+                });
         }
 
         private void CommandExe(string key, string value)
@@ -219,6 +225,39 @@ namespace EasyCom
                     mainWindow.WindowState = state;
                 });
             }
+            else if (StrCompare(key, "selectTabByName"))
+            {
+                ConnectionTabData tabData = ConnectionTabHelper.ConnectionTabDataList.Find((data) => { return data.TabItem.Title == value; });
+                if (tabData != null)
+                {
+                    SelectedConnectionTab = tabData;
+                }
+            }
+            else if (StrCompare(key, "selectTabByIndex"))
+            {
+                uint index;
+                if (uint.TryParse(value,out index))
+                {
+                    ConnectionTabData tabData = ConnectionTabHelper.ConnectionTabDataList.ElementAt((int)index);
+                    if (tabData != null)
+                    {
+                        SelectedConnectionTab = tabData;
+                    }
+                }
+                
+            }
+            else if (StrCompare(key, "focus"))
+            {
+                if (SelectedConnectionTab != null)
+                {
+                    SelectedConnectionTab.Focus();
+                }
+            }
+            else if (StrCompare(key,"connected"))
+            {
+            
+            }
+            
             else
             {
                 if (SelectedConnectionTab != null)

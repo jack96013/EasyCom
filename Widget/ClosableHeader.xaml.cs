@@ -33,7 +33,7 @@ namespace EasyCom
         public CloseableHeader closeableTabHeader;
         private Action<Object> onCloseMethod;
         private bool available;
-        public ConnectionTabData connectionTabData;
+        public ConnectionTabData ConnectionTabData { get; }
 
         public ConnectionTabItem(ConnectionTabData connectionTabData)
         {
@@ -53,7 +53,7 @@ namespace EasyCom
                new SizeChangedEventHandler(label_TabTitle_SizeChanged);
 
             this.Available = false;
-            this.connectionTabData = connectionTabData;
+            this.ConnectionTabData = connectionTabData;
         }
 
         public string Title

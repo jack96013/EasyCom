@@ -14,6 +14,6 @@ namespace EasyCom
         void SettingsRestore(object settings);
         void GetSetting(object settings);
         void SetSettingDefault (object settings);
-        Action<object,bool> SettingChangedCallBack { get; set; }
+        Action<bool> SettingChangedCallBack { get; set; }
     }
 }

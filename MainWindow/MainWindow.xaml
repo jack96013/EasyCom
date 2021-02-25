@@ -204,7 +204,7 @@
                                     </Grid.ColumnDefinitions>
                                     <StackPanel Grid.Column="0" Margin="3">
                                         <DockPanel Height="27">
-                                            <Label Content="自動行結尾" DockPanel.Dock="Left" VerticalContentAlignment="Center" Padding="4,5,4,0" Width="80"/>
+                                            <Label Content="自動行結尾" DockPanel.Dock="Left" VerticalContentAlignment="Center" Padding="4,5,4,0" Width="90"/>
                                             <ComboBox x:Name="Combo_Send_LineEnding"/>
                                         </DockPanel>
 

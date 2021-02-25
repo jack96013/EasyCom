@@ -33,7 +33,6 @@ namespace EasyCom
     {
         private ConnectionTabHelper connectionTabHelper;
 
-
         private PopupDialogHost popupDialogHost = null;
 
         private readonly Updater updater;
@@ -95,6 +94,9 @@ namespace EasyCom
             //controlCommandHandle.StartUpCommandHandle();
             //ComboBox_Connection_Type. += ((s,e)=> { Debug.WriteLine("trig"); });
             Application.Current.Exit += App_Exit;
+
+
+            ProcessHandle processHandle = new ProcessHandle();
         }
 
         private void App_Exit(object sender, ExitEventArgs e)
@@ -133,8 +135,6 @@ namespace EasyCom
             this.TextBox_Send_Text.TextChanged += TextBox_Send_Text_TextChanged;
             this.TextBox_Send_Path.TextChanged += TextBox_Send_Path_TextChanged;
             
-            
-
             this.Button_ReceiveWindow_Clear.Click += Button_ReceiveWindow_Clear_Click;
             this.Button_ReceiveWindow_Freeze.Click += Button_ReceiveWindow_Freeze_Click;
             this.Button_ReceiveWindow_PrintNewLine.Click += Button_ReceiveWindow_PrintNewLine_Click;
@@ -147,21 +147,23 @@ namespace EasyCom
             this.Button_Connection_Cancel.Click += Button_Connection_Cancel_Click; ;
         }
 
+
+
         private void Button_Connection_Cancel_Click(object sender, RoutedEventArgs e)
         {
             ((IPageSetting)connectionTabHelper.CurrentTabData.ConnectionType.AdvanceSettingsPage).SettingsRestore(connectionTabHelper.CurrentTabData.ToolBarSetting.ConnectionSettings);
-            SettingChangedCallBack(null, false);
+            SettingChangedCallBack(false);
         }
 
         private void Button_Connection_Confirm_Click(object sender, RoutedEventArgs e)
         {
             bool successful = connectionTabHelper.CurrentTabData.ApplySetting();
-            SettingChangedCallBack(null,!successful);
+            SettingChangedCallBack(!successful);
         }
 
         private void Button_About_Click(object sender, RoutedEventArgs e)
         {
-            PopupDialogHost.CurrentDialog = new PopupDialog(new PageAboutDialog());
+            PopupDialogHost.CurrentDialog = new PageAboutDialog().PopupDialog;
             PopupDialogHost.Show();
         }
 
@@ -211,13 +213,14 @@ namespace EasyCom
             if (ConnectionTabHelper.CurrentTabData.Connected)
             {
                 ConnectionTabHelper.CurrentTabData.Disconnect();
-                
             }
             else
             {
-                ConnectionTabHelper.CurrentTabData.SaveSettingFromAdvancedSettingPage();
-                ConnectionTabHelper.CurrentTabData.Connect();
-                Debug.WriteLine(ConnectionTabHelper.CurrentTabData.Connected, "Connected2:");
+                bool a = ConnectionTabHelper.CurrentTabData.SaveSettingFromAdvancedSettingPage();
+                if (a)
+                    ConnectionTabHelper.CurrentTabData.Connect();
+                else
+                    Console.WriteLine("\nFail:");
             }
             
         }
@@ -400,7 +403,7 @@ namespace EasyCom
         }
 
         //If Setting has already be changed in AdvancedSettingPage , this function will be called
-        public void SettingChangedCallBack(object advancePage,bool isChanged)
+        public void SettingChangedCallBack(bool isChanged)
         {
             //change icon status
             if (connectionTabHelper.CurrentTabData!= null&&connectionTabHelper.CurrentTabData.Connected && isChanged)

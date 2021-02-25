@@ -51,7 +51,7 @@ namespace EasyCom.Connection.Serial
             }
         }
 
-        public Action<object,bool> SettingChangedCallBack { get; set ; }
+        public Action<bool> SettingChangedCallBack { get; set ; }
 
         public PageSetting(MainWindow mainWindow)
         {
@@ -153,7 +153,7 @@ namespace EasyCom.Connection.Serial
                     // ex: Arduino Uno (COM7)
                     string result = port.GetPropertyValue("Caption").ToString();
                    
-                    Match cmpResult = Regex.Match(result, @"(.+?)\(COM(\d+)(?=\D?)");
+                    Match cmpResult = Regex.Match(result, @"(.+?)\(COM(\d+)(?=\D?)\)");
                     if (cmpResult.Success)
                     {
                         Match idResult = Regex.Match(port.GetPropertyValue("DeviceID").ToString(), @".+\\VID_(\w+)&PID_(\w+)\\.+");
@@ -165,9 +165,7 @@ namespace EasyCom.Connection.Serial
                         int ResultID = int.Parse(cmpResult.Groups[2].Value,CultureInfo.InvariantCulture);
                         string ResultDescription = cmpResult.Groups[1].ToString();
 
-                        object[] element = serialportData.Find((x)=> {return (int)x[0] == ResultID;});
-                        element[1] = ResultDescription;
-                        newPortList.Add(new ComPortItem((int)element[0], (string)element[1]));
+                        newPortList.Add(new ComPortItem(ResultID, ResultDescription));
                     }
                 }
                 newPortList.Sort((x, y) => { return x.ComID.CompareTo(y.ComID); });
@@ -324,7 +322,7 @@ namespace EasyCom.Connection.Serial
             Settings newSettings = new Settings();
             GetSetting(newSettings);
             if (settings != null)
-                SettingChangedCallBack?.Invoke(this, !settings.Equal(newSettings));
+                SettingChangedCallBack?.Invoke(!settings.Equal(newSettings));
         }
 
 

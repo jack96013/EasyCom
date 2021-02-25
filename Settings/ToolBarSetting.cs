@@ -9,7 +9,9 @@ namespace EasyCom.Settings
     {
 
         public bool Connected { get ; set ; }
-        public IConnectionSettings ConnectionSettings { get ; set ; }
+        //public IConnectionSettings ConnectionSettings { get ; set ; }
+        public IConnectionSettings ConnectionSettings { get; set; }
+        public bool ConnectionSettingsIsChanged { get; set; }
         public bool ReceiveAutoSpilt { get ; set ; }
         public bool ReceiveShowTime { get ; set ; }
         public MainWindowOption.LineEndingItem ReceiveLineEnding { get ; set ; }

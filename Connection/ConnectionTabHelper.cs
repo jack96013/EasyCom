@@ -19,11 +19,11 @@ namespace EasyCom
 
         private MainWindow currentWindow;
 
-        private List<ConnectionTabData> connectionTabDataList = new List<ConnectionTabData>();
+        public List<ConnectionTabData> ConnectionTabDataList { get; } = new List<ConnectionTabData>();
 
         private TabItem TabItem_Add = new TabItem() { Header = "+", Width = 30 };
 
-        public DispatcherTimer ReceiveWindowRefreshTimer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(50) };
+        public DispatcherTimer ReceiveWindowRefreshTimer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(10) };
         public ManualResetEvent ReceiveWindowRefreshLock = new ManualResetEvent(true);
         public ManualResetEvent ReceiveWindowRefreshLock_Show = new ManualResetEvent(true);
 
@@ -40,7 +40,7 @@ namespace EasyCom
             get
             {
                 if (TabControl_ReceiveWindow.SelectedItem != null && TabControl_ReceiveWindow.SelectedItem != TabItem_Add)
-                    return ((ConnectionTabItem)TabControl_ReceiveWindow.SelectedItem).connectionTabData;
+                    return ((ConnectionTabItem)TabControl_ReceiveWindow.SelectedItem).ConnectionTabData;
                 else
                     return null;
             }
@@ -51,10 +51,11 @@ namespace EasyCom
         public bool AutoNewTab { get => autoNewTab; set => autoNewTab = value; }
         public ConnectionTabData SelectedTab
         {
-            get => selectedTab; set
+            get {
+                return (TabControl_ReceiveWindow.SelectedItem as ConnectionTabItem).ConnectionTabData;
+            } set
             {
-                selectedTab = value;
-                TabControl_ReceiveWindow.SelectedItem = selectedTab.TabItem;
+                TabControl_ReceiveWindow.SelectedItem = value.TabItem;
 
             }
         }
@@ -155,7 +156,7 @@ namespace EasyCom
                 {
                     ConnectionTabItem previous = previousSelectedTab as ConnectionTabItem; //get the previous tabitem
                     Debug.WriteLine("Prev : " + previous.Title);
-                    SaveToolBarSettingsForPreviousTab(previous.connectionTabData);
+                    SaveToolBarSettingsForPreviousTab(previous.ConnectionTabData);
 
                 }
                 if (selectedTab.Equals(TabItem_Add))
@@ -174,7 +175,7 @@ namespace EasyCom
 
 
                     Debug.WriteLine("Next : " + ((ConnectionTabItem)TabControl_ReceiveWindow.SelectedItem).Title);
-                    foreach (ConnectionTabData k in connectionTabDataList)
+                    foreach (ConnectionTabData k in ConnectionTabDataList)
                     {
                         k.TabItem.Content = null;
                     }
@@ -192,7 +193,7 @@ namespace EasyCom
             ConnectionTabData newData = new ConnectionTabData(this);
             newData.TabItem.onClose = CloseTab;
 
-            connectionTabDataList.Add(newData);
+            ConnectionTabDataList.Add(newData);
 
             //將建立好的加進分頁
             TabControl_ReceiveWindow.Items.Insert(TabControl_ReceiveWindow.Items.Count - 1, newData.TabItem);
@@ -232,12 +233,12 @@ namespace EasyCom
             }
 
             TabControl_ReceiveWindow.Items.Remove(currentTabItem);
-            connectionTabDataList.Remove(currentTabItem.connectionTabData);
+            ConnectionTabDataList.Remove(currentTabItem.ConnectionTabData);
         }
 
         public void AddNewText(Color color, string text)
         {
-            ReceivePage.testViewModel.text = text;
+            //ReceivePage.testViewModel.text = text;
             CurrentWindow.Dispatcher.Invoke(() =>
             {
                 //Paragraph paragraph = (Paragraph)ReceivePage.Receive_Text.Document.Blocks.ElementAt(0);
@@ -261,7 +262,7 @@ namespace EasyCom
             if (PreviousTabData.ToolBarSetting.ConnectionSettings != null && PreviousTabData.ConnectionType.AdvanceSettingsPage != null)
             {
                 Debug.WriteLine("Save " + PreviousTabData.TabItem.Title);
-                //((IPageSetting)PreviousTabData.ConnectionType.AdvanceSettingsPage).GetSetting(PreviousTabData.ToolBarSetting.ConnectionSettings);
+                ((IPageSetting)PreviousTabData.ConnectionType.AdvanceSettingsPage).GetSetting(PreviousTabData.ToolBarSetting.ConnectionSettings);
             }
         }
         /// <summary>

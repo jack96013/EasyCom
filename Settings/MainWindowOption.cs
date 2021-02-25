@@ -50,6 +50,7 @@ namespace EasyCom.Settings
 
         public void LineEndingTypeListInit()
         {
+            LineEndingTypeList.Add(new LineEndingItem("無", null));
             LineEndingTypeList.Add(new LineEndingItem("CR", "\r"));
             LineEndingTypeList.Add(new LineEndingItem("LF", "\n"));
             LineEndingTypeList.Add(new LineEndingItem("CRLF", "\r\n"));

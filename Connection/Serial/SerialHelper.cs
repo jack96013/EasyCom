@@ -12,7 +12,7 @@ namespace EasyCom.Connection.Serial
     {
         //public SerialPortStream Serial;
         public SerialPort SerialPort { get; set; }
-        private ConnectionTabData currentTab;
+        private readonly ConnectionTabData currentTab;
 
         private EasyCom.Settings.ToolBarSetting toolBarSettings;
 
@@ -46,7 +46,7 @@ namespace EasyCom.Connection.Serial
         {
             try
             {
-                Settings ConnectionSettings = (Settings)currentTab.ToolBarSetting.ConnectionSettings;
+                Settings ConnectionSettings = (Settings)currentTab.ConnectionSettings;
                 string PortName = String.Format(CultureInfo.InvariantCulture, "COM{0}", ConnectionSettings.ComPort);
                 if (SerialPort.PortName != PortName)
                     SerialPort.PortName = String.Format(CultureInfo.InvariantCulture, "COM{0}", ConnectionSettings.ComPort);
@@ -195,7 +195,6 @@ namespace EasyCom.Connection.Serial
         {
             get
             {
-
                 if (Connected)
                 {
                     Settings ConnectionSettings = (Settings)currentTab.ToolBarSetting.ConnectionSettings;
