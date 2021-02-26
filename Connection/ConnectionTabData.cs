@@ -103,7 +103,7 @@ namespace EasyCom
         public bool SaveSettingFromAdvancedSettingPage()
         {
             bool a = SaveSettingFromAdvancedSettingPage(ToolBarSetting.ConnectionSettings);
-            Console.WriteLine(((Connection.Serial.Settings)ToolBarSetting.ConnectionSettings).Info());
+            //Console.WriteLine(((Connection.Serial.Settings)ToolBarSetting.ConnectionSettings).Info());
             return a;
         }
         private bool SaveSettingFromAdvancedSettingPage(object setting)
@@ -121,7 +121,7 @@ namespace EasyCom
         public void Connect()
         {
             ConnectionSettings = ToolBarSetting.ConnectionSettings;
-            Console.WriteLine(((Connection.Serial.Settings)ConnectionSettings).Info()); 
+            //Console.WriteLine(((Connection.Serial.Settings)ConnectionSettings).Info()); 
             if (ConnectionObject is null || ConnectionObject.GetType()!=ConnectionType.ConnectionObjectType)
                 CreateConnectionInstance();
             ConnectionObject.Open();
@@ -248,7 +248,8 @@ namespace EasyCom
         public void ShowData(byte[] data,DateTime time)
         {
             //String ConvertedData = Encoding.UTF8.GetString(data);
-            String ConvertedData = "";
+            
+            string ConvertedData;
             if (ToolBarSetting.ReceiveDecodeType.Name == "HEX")
             {
                 ConvertedData = BitConverter.ToString(data).Replace("-", " ");
@@ -287,18 +288,22 @@ namespace EasyCom
             
             if (ToolBarSetting.ReceiveAutoSpilt)
             {
+                if (ToolBarSetting.ReceiveWindowText.Length != 0)
+                    ToolBarSetting.ReceiveWindowText.Append("\n");
                 if (ToolBarSetting.ReceiveShowTime)
                 {
                     ToolBarSetting.ReceiveWindowText.Append(time.ToString("[MM H:mm:ss.fff]",CultureInfo.InvariantCulture));
                     ToolBarSetting.ReceiveWindowText.Append(input ? "⊙ " : "⊕ ");
                     
                 }
+                
                 ToolBarSetting.ReceiveWindowText.Append(data);
-                ToolBarSetting.ReceiveWindowText.Append(ToolBarSetting.ReceiveLineEnding.Value);
+                //ToolBarSetting.ReceiveWindowText.Append(ToolBarSetting.ReceiveLineEnding.Value);
             }
             else
             {
                 ToolBarSetting.ReceiveWindowText.Append(data);
+                
             }
 
             Debug.WriteLine(ToolBarSetting.ReceiveWindowText.Length);
@@ -306,7 +311,6 @@ namespace EasyCom
             if (ToolBarSetting.ReceiveWindowText.Length > 30000)
             {
                 ToolBarSetting.ReceiveWindowText.Remove(0, ToolBarSetting.ReceiveWindowText.Length- 30000);
-                Debug.Print("Clear");
             }
 
             //TEST
@@ -322,8 +326,6 @@ namespace EasyCom
                 paragraph.Inlines.Add(myRun2);
             });
             */
-
-            
         }
 
         public void Focus()

@@ -251,6 +251,7 @@ namespace EasyCom
 
         public void Text_Send_Click(object sender, RoutedEventArgs e)
         {
+            
             ConnectionTabHelper.CurrentTabData.SendData(this.TextBox_Send_Text.Text,DateTime.Now);
         }
         private void File_Send_Click(object sender, RoutedEventArgs e)
