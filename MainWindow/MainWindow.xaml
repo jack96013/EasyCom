@@ -233,7 +233,16 @@
                                 </Grid>
 
                             </TabItem>
-
+                            <TabItem Header="檔案發送">
+                                <Grid Margin="5">
+                                    <Label Content="每次發送" VerticalAlignment="Top" HorizontalAlignment="Left" Height="25"/>
+                                    <TextBox x:Name="TextBox_Send_FileSize" Margin="80,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="60"/>
+                                    <Label Content="Bytes" VerticalAlignment="Top" HorizontalAlignment="Left" Height="25" Margin="150,0,0,0"/>
+                                    <Label Content="每次間格" Margin="0,30,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Height="25"/>
+                                    <Label Content="ms" VerticalAlignment="Top" HorizontalAlignment="Left" Height="25" Margin="150,30,0,0"/>
+                                    <TextBox x:Name="TextBox_Send_FileInterval" VerticalAlignment="Top" Margin="80,30,0,0" HorizontalAlignment="Left" Width="60"/>
+                                </Grid>
+                            </TabItem>
                         </TabControl>
 
                         <Grid Grid.Column="3" Margin="5,0,0,0">
@@ -262,9 +271,9 @@
                                 </Grid>
                             </Grid>
                             <Grid Grid.Row="1">
-                                <TextBox x:Name="TextBox_Send_Path" Margin="98,2,68,3" TextWrapping="Wrap" VerticalAlignment="Center" AutomationProperties.HelpText="檔案路徑" Height="30"/>
-                                <Button Content="開啟檔案" HorizontalAlignment="Left" Margin="4,2.5,0,2.5" VerticalAlignment="Center" Height="Auto"/>
-                                <Button x:Name="File_Send_Button" VerticalAlignment="Center" Margin="0,5,3,6" Height="Auto" HorizontalAlignment="Right" Click="File_Send_Click" IsEnabled="False" Width="60">
+                                <TextBox Name="TextBox_Send_FilePath" Margin="98,2,68,3" VerticalAlignment="Center" AutomationProperties.HelpText="檔案路徑" Height="30"/>
+                                <Button Name ="Button_Send_OpenFile" Content="開啟檔案" HorizontalAlignment="Left" Margin="4,2.5,0,2.5" VerticalAlignment="Center" Height="Auto"/>
+                                <Button Name="Button_Send_File" VerticalAlignment="Center" Margin="0,5,3,6" Height="Auto" HorizontalAlignment="Right" Click="File_Send_Click" IsEnabled="False" Width="60">
                                     <materialDesign:PackIcon Kind="PaperAirplane"/>
                                 </Button>
                             </Grid>

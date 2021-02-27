@@ -26,6 +26,8 @@ namespace EasyCom.Settings
         public uint SendAutoSenderAmount { get; set; }
         public string SendText { get; set; }
         public string SendPath { get; set; }
+        public int SendFileBufferSize { get; set; }
+        public int SendFileInterval { get; set; }
         public bool ReceiveWindowTextUpdated { get; set; }
         public bool ReceiveWindowFreeze { get; set; }
         public StringBuilder ReceiveWindowText { get; set; }

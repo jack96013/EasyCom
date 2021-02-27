@@ -306,7 +306,9 @@ namespace EasyCom
             CurrentWindow.TextBox_AutoSender_Amount.Text = toolBarSettings.SendAutoSenderAmount.ToString(CultureInfo.InvariantCulture);
 
             CurrentWindow.TextBox_Send_Text.Text = toolBarSettings.SendText;
-            CurrentWindow.TextBox_Send_Path.Text = toolBarSettings.SendPath;
+            CurrentWindow.TextBox_Send_FilePath.Text = toolBarSettings.SendPath;
+            CurrentWindow.TextBox_Send_FileSize.Text = toolBarSettings.SendFileBufferSize.ToString();
+            CurrentWindow.TextBox_Send_FileInterval.Text = toolBarSettings.SendFileInterval.ToString();
 
             toolBarSettings.ReceiveWindowTextUpdated = true;
 

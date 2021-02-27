@@ -4,8 +4,11 @@ using EasyCom.Settings;
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Documents;
 
 namespace EasyCom
@@ -17,7 +20,7 @@ namespace EasyCom
 
         private ConnectionTabItem tabItem = null;
         private ConnectionType connectionType = null;
-        public IConnection ConnectionObject { get; set; }=null;
+        public IConnection ConnectionObject { get; set; } = null;
         public IConnectionSettings ConnectionSettings { get; set; } //For Connected ConnectionObject
 
         public ToolBarSetting ToolBarSetting { get; set; } = new ToolBarSetting();
@@ -25,7 +28,7 @@ namespace EasyCom
         public ConnectionTabData(ConnectionTabHelper connectionTabHelper)
         {
             this.tabHelper = connectionTabHelper;
-            
+
             this.parentWindow = connectionTabHelper.CurrentWindow;
             //this.ReceivePage = page_ConnectionTab;
             //Frame ReceiveFrame = new Frame();
@@ -40,26 +43,28 @@ namespace EasyCom
         {
             MainWindowOption mainWindowOption = parentWindow.Options;
             ToolBarSetting.Connected = false;
-            
+
             ToolBarSetting.ConnectionSettings = null;
 
-            ToolBarSetting.ReceiveAutoSpilt=true;
-            ToolBarSetting.ReceiveShowTime=true;
-            ToolBarSetting.ReceiveLineEnding=mainWindowOption.LineEndingTypeList.ElementAt(1);
-            ToolBarSetting.ReceiveTimeOut=20;
-            ToolBarSetting.ReceiveDecodeType= mainWindowOption.DecodingTypeList.ElementAt(1);
-            
-            ToolBarSetting.SendLineEnding= mainWindowOption.LineEndingTypeList.ElementAt(1);
-            ToolBarSetting.SendHex=false;
-            ToolBarSetting.SendShowOnReceive=true;
-            
-            ToolBarSetting.SendAutoSenderEnable=false;
+            ToolBarSetting.ReceiveAutoSpilt = true;
+            ToolBarSetting.ReceiveShowTime = true;
+            ToolBarSetting.ReceiveLineEnding = mainWindowOption.LineEndingTypeList.ElementAt(1);
+            ToolBarSetting.ReceiveTimeOut = 20;
+            ToolBarSetting.ReceiveDecodeType = mainWindowOption.DecodingTypeList.ElementAt(1);
+
+            ToolBarSetting.SendLineEnding = mainWindowOption.LineEndingTypeList.ElementAt(1);
+            ToolBarSetting.SendHex = false;
+            ToolBarSetting.SendShowOnReceive = true;
+
+            ToolBarSetting.SendAutoSenderEnable = false;
             ToolBarSetting.SendAutoSenderInterval = 1;
             ToolBarSetting.SendAutoSenderAmountEnable = false;
-            ToolBarSetting.SendAutoSenderAmount=0;
-            
-            ToolBarSetting.SendText="";
-            ToolBarSetting.SendPath="";
+            ToolBarSetting.SendAutoSenderAmount = 0;
+
+            ToolBarSetting.SendText = "";
+            ToolBarSetting.SendPath = "";
+            ToolBarSetting.SendFileBufferSize = 256;
+            ToolBarSetting.SendFileInterval = 10;
 
             ToolBarSetting.ReceiveWindowText = new StringBuilder();
             ToolBarSetting.ReceiveWindowText.Capacity = 50;
@@ -95,7 +100,7 @@ namespace EasyCom
                 {
                     return false;
                 }
-                
+
             }
         }
 
@@ -111,18 +116,18 @@ namespace EasyCom
             if (tabHelper.SelectedTab == this)
             {
                 ((IPageSetting)ConnectionType.AdvanceSettingsPage).GetSetting(setting);
-                
+
                 return true;
             }
             return false;
-                
+
         }
 
         public void Connect()
         {
             ConnectionSettings = ToolBarSetting.ConnectionSettings;
             //Console.WriteLine(((Connection.Serial.Settings)ConnectionSettings).Info()); 
-            if (ConnectionObject is null || ConnectionObject.GetType()!=ConnectionType.ConnectionObjectType)
+            if (ConnectionObject is null || ConnectionObject.GetType() != ConnectionType.ConnectionObjectType)
                 CreateConnectionInstance();
             ConnectionObject.Open();
         }
@@ -232,7 +237,7 @@ namespace EasyCom
             parentWindow.Button_Connection_Connect_Available = false;
             ToolBarSetting.Connected = false;
 
-            
+
         }
 
         public void ApplyOnFail()
@@ -245,10 +250,10 @@ namespace EasyCom
 
         }
 
-        public void ShowData(byte[] data,DateTime time)
+        public void ShowData(byte[] data, DateTime time)
         {
             //String ConvertedData = Encoding.UTF8.GetString(data);
-            
+
             string ConvertedData;
             if (ToolBarSetting.ReceiveDecodeType.Name == "HEX")
             {
@@ -256,11 +261,11 @@ namespace EasyCom
             }
             else
                 ConvertedData = ToolBarSetting.ReceiveDecodeType.Value.GetString(data);
-            AppendTextToReceiveWindow(true,ConvertedData,time);
+            AppendTextToReceiveWindow(true, ConvertedData, time);
 
         }
 
-        public void SendData(string data,DateTime time)
+        public void SendData(string data, DateTime time)
         {
             if (ConnectionObject != null && ConnectionObject.Connected)
             {
@@ -278,10 +283,82 @@ namespace EasyCom
             }
         }
 
+        public void SendFile()
+        {
+            Console.WriteLine(ToolBarSetting.SendPath);
+            if (ConnectionObject == null || !ConnectionObject.Connected)
+            {
+                return;
+            }
+            Task.Factory.StartNew(() => {
+                using (FileStream fs = File.Open(ToolBarSetting.SendPath,FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    DateTime startTime = System.DateTime.Now;
+                    BufferedStream BufferedStreamInput = new BufferedStream(fs);
+
+                    // Add some information to the file.
+                    //fs.Write(info, 0, info.Length);
+                    AppendTextToReceiveWindow(false, string.Format("開始發送檔案共 {0} Bytes",fs.Length) , DateTime.Now);
+                    ToolBarSetting.ReceiveWindowTextUpdated = true;
+
+                    int split = ToolBarSetting.SendFileBufferSize;
+                    long index = 0;
+                    byte[] dataArray = new byte[split];
+
+                    long lenSplit = fs.Length / 100;
+                    long lenSplitCur = lenSplit;
+                    int percent=0;
+
+                    int intByte = 0;
+
+                    bool finish = false;
+                    while(!finish)
+                    {
+                        if (!ConnectionObject.Connected)
+                            return;
+                        //透過緩衝輸入物件，將資料讀到 陣列
+                        //一次讀取 16 個位元組長度
+                        intByte = BufferedStreamInput.Read(dataArray, 0, split);
+                        //Console.WriteLine(intByte);
+                        //同樣的透過緩衝物件輸出資料
+
+                        //將緩衝區資料清除
+                        BufferedStreamInput.Flush();
+                        index += intByte;
+                        if (intByte != split)
+                        {
+                            BufferedStreamInput.Close();
+                            finish = true;
+                        }
+                        if (index >= lenSplitCur)
+                        {
+                            lenSplitCur += lenSplit;
+                            percent++;
+                            Console.WriteLine(percent);
+                            AppendTextToReceiveWindow(false, string.Format(CultureInfo.InvariantCulture, "檔案發送 {0}%", percent),DateTime.Now);
+                            ToolBarSetting.ReceiveWindowTextUpdated = true;
+
+                        }
+                        if (finish)
+                        {
+                            Array.Resize(ref dataArray,intByte);
+                        }                        
+                        ConnectionObject.SendData(dataArray,false);
+                        
+                        Thread.Sleep(ToolBarSetting.SendFileInterval);
+                    }
+                    AppendTextToReceiveWindow(false, string.Format(CultureInfo.InvariantCulture, "發送完成! 共耗時 {0}", DateTime.Now.Subtract(startTime).ToString()), DateTime.Now);
+                    
+                }
+                Console.WriteLine("finish\n");
+            },CancellationToken.None, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default);
+        }
+
         public void AppendTextToReceiveWindow(string data)
         {
             
         }
+
 
         public void AppendTextToReceiveWindow(bool input,string data, DateTime time)
         {
@@ -298,7 +375,6 @@ namespace EasyCom
                 }
                 
                 ToolBarSetting.ReceiveWindowText.Append(data);
-                //ToolBarSetting.ReceiveWindowText.Append(ToolBarSetting.ReceiveLineEnding.Value);
             }
             else
             {

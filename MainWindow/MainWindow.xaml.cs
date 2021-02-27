@@ -106,48 +106,100 @@ namespace EasyCom
 
         private void SettingWidgetsInit()
         {
-            this.Combo_Receive_LineEnding.ItemsSource = Options.LineEndingTypeList;
-            this.Combo_Send_LineEnding.ItemsSource = Options.LineEndingTypeList;
-            this.Combo_Receive_DecodeType.ItemsSource = Options.DecodingTypeList;
+            Combo_Receive_LineEnding.ItemsSource = Options.LineEndingTypeList;
+            Combo_Send_LineEnding.ItemsSource = Options.LineEndingTypeList;
+            Combo_Receive_DecodeType.ItemsSource = Options.DecodingTypeList;
 
-            this.Toggle_Receive_AutoSpilt.Checked += Toggle_Receive_AutoSpilt_CheckedChange;
-            this.Toggle_Receive_AutoSpilt.Unchecked += Toggle_Receive_AutoSpilt_CheckedChange;
-            this.Toggle_Receive_ShowTime.Checked += Toggle_Receive_ShowTime_CheckedChange; ;
-            this.Toggle_Receive_ShowTime.Unchecked += Toggle_Receive_ShowTime_CheckedChange;
-            this.Combo_Receive_LineEnding.SelectionChanged += Combo_Receive_LineEnding_SelectionChanged;
-            this.TextBox_Receive_Timeout.TextChanged += TextBox_Receive_Timeout_TextChanged;
-            this.Combo_Receive_DecodeType.SelectionChanged += Combo_Receive_DecodeType_SelectionChanged;
+            Toggle_Receive_AutoSpilt.Checked += Toggle_Receive_AutoSpilt_CheckedChange;
+            Toggle_Receive_AutoSpilt.Unchecked += Toggle_Receive_AutoSpilt_CheckedChange;
+            Toggle_Receive_ShowTime.Checked += Toggle_Receive_ShowTime_CheckedChange; ;
+            Toggle_Receive_ShowTime.Unchecked += Toggle_Receive_ShowTime_CheckedChange;
+            Combo_Receive_LineEnding.SelectionChanged += Combo_Receive_LineEnding_SelectionChanged;
+            TextBox_Receive_Timeout.TextChanged += TextBox_Receive_Timeout_TextChanged;
+            Combo_Receive_DecodeType.SelectionChanged += Combo_Receive_DecodeType_SelectionChanged;
 
-            this.Combo_Send_LineEnding.SelectionChanged += Combo_Send_LineEnding_SelectionChanged;
-            this.Toggle_Send_Hex.Checked += Toggle_Send_Hex_CheckedChange;
-            this.Toggle_Send_Hex.Unchecked += Toggle_Send_Hex_CheckedChange;
-            this.Toggle_Send_ShowOnReceive.Checked += Toggle_Send_ShowOnReceive_CheckedChange;
-            this.Toggle_Send_ShowOnReceive.Unchecked += Toggle_Send_ShowOnReceive_CheckedChange;
+            Combo_Send_LineEnding.SelectionChanged += Combo_Send_LineEnding_SelectionChanged;
+            Toggle_Send_Hex.Checked += Toggle_Send_Hex_CheckedChange;
+            Toggle_Send_Hex.Unchecked += Toggle_Send_Hex_CheckedChange;
+            Toggle_Send_ShowOnReceive.Checked += Toggle_Send_ShowOnReceive_CheckedChange;
+            Toggle_Send_ShowOnReceive.Unchecked += Toggle_Send_ShowOnReceive_CheckedChange;
 
-            this.CheckBox_AutoSender_Enable.Checked += CheckBox_AutoSender_Enable_CheckedChange;
-            this.CheckBox_AutoSender_Enable.Unchecked += CheckBox_AutoSender_Enable_CheckedChange;
-            this.TextBox_AutoSender_Interval.TextChanged += TextBox_AutoSender_Interval_TextChanged;
+            CheckBox_AutoSender_Enable.Checked += CheckBox_AutoSender_Enable_CheckedChange;
+            CheckBox_AutoSender_Enable.Unchecked += CheckBox_AutoSender_Enable_CheckedChange;
+            TextBox_AutoSender_Interval.TextChanged += TextBox_AutoSender_Interval_TextChanged;
 
-            this.CheckBox_AutoSender_AmountEnable.Checked += CheckBox_AutoSender_AmountEnable_CheckedChange; ;
-            this.CheckBox_AutoSender_AmountEnable.Unchecked += CheckBox_AutoSender_AmountEnable_CheckedChange;
-            this.TextBox_AutoSender_Amount.TextChanged += TextBox_AutoSender_Amount_TextChanged;
+            CheckBox_AutoSender_AmountEnable.Checked += CheckBox_AutoSender_AmountEnable_CheckedChange; ;
+            CheckBox_AutoSender_AmountEnable.Unchecked += CheckBox_AutoSender_AmountEnable_CheckedChange;
+            TextBox_AutoSender_Amount.TextChanged += TextBox_AutoSender_Amount_TextChanged;
 
-            this.TextBox_Send_Text.TextChanged += TextBox_Send_Text_TextChanged;
-            this.TextBox_Send_Path.TextChanged += TextBox_Send_Path_TextChanged;
+            TextBox_Send_Text.TextChanged += TextBox_Send_Text_TextChanged;
+            TextBox_Send_FilePath.TextChanged += TextBox_Send_Path_TextChanged;
             
-            this.Button_ReceiveWindow_Clear.Click += Button_ReceiveWindow_Clear_Click;
-            this.Button_ReceiveWindow_Freeze.Click += Button_ReceiveWindow_Freeze_Click;
-            this.Button_ReceiveWindow_PrintNewLine.Click += Button_ReceiveWindow_PrintNewLine_Click;
+            Button_ReceiveWindow_Clear.Click += Button_ReceiveWindow_Clear_Click;
+            Button_ReceiveWindow_Freeze.Click += Button_ReceiveWindow_Freeze_Click;
+            Button_ReceiveWindow_PrintNewLine.Click += Button_ReceiveWindow_PrintNewLine_Click;
 
-            this.Button_Update.Click += Button_Update_Click;
-            this.Panel_UpdateNotify.Visibility = Visibility.Hidden;
+            Button_Update.Click += Button_Update_Click;
+            Panel_UpdateNotify.Visibility = Visibility.Hidden;
 
-            this.Button_About.Click += Button_About_Click;
-            this.Button_Connection_Confirm.Click += Button_Connection_Confirm_Click;
-            this.Button_Connection_Cancel.Click += Button_Connection_Cancel_Click; ;
+            Button_About.Click += Button_About_Click;
+            Button_Connection_Confirm.Click += Button_Connection_Confirm_Click;
+            Button_Connection_Cancel.Click += Button_Connection_Cancel_Click;
+
+            Button_Send_OpenFile.Click += Button_OpenFile_Click;
+            Button_Send_File.Click += Button_Send_File_Click;
+            TextBox_Send_FileSize.TextChanged += TextBox_Send_FileSize_TextChanged;
+            TextBox_Send_FileInterval.TextChanged += TextBox_Send_FileInterval_TextChanged;
+        }
+
+        private void TextBox_Send_FileInterval_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            bool success = int.TryParse(TextBox_Send_FileInterval.Text, out int result);
+            if (success && result >= 0)
+            {
+                connectionTabHelper.CurrentTabData.ToolBarSetting.SendFileInterval = result;
+            }
+            else
+            {
+                TextBox_Send_FileInterval.Text = "0";
+            }
+        }
+
+        private void TextBox_Send_FileSize_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            bool success = int.TryParse(TextBox_Send_FileSize.Text,out int result);
+            if (success && result > 0)
+            {
+                connectionTabHelper.CurrentTabData.ToolBarSetting.SendFileBufferSize = result;
+            }
+            else
+            {
+                TextBox_Send_FileSize.Text = "256";
+            }
         }
 
 
+
+        private void Button_Send_File_Click(object sender, RoutedEventArgs e)
+        {
+            ConnectionTabHelper.CurrentTabData.SendFile();
+        }
+
+        private void Button_OpenFile_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+            //dlg.DefaultExt = ".png";
+            //dlg.Filter = "";
+
+            Nullable<bool> result = dlg.ShowDialog();
+
+            if (result == true)
+            {
+                // Open document 
+                //string filename = dlg.FileName;
+                TextBox_Send_FilePath.Text = dlg.FileName;
+            }
+        }
 
         private void Button_Connection_Cancel_Click(object sender, RoutedEventArgs e)
         {
@@ -391,6 +443,7 @@ namespace EasyCom
         private void TextBox_Send_Path_TextChanged(object sender, TextChangedEventArgs e)
         {
             ConnectionTabHelper.CurrentTabData.ToolBarSetting.SendPath = ((TextBox)sender).Text;
+            this.Button_Send_File.IsEnabled = File.Exists(this.TextBox_Send_FilePath.Text);
         }
 
         private void TextBox_Send_Text_TextChanged(object sender, TextChangedEventArgs e)

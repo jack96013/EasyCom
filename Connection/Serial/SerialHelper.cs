@@ -138,7 +138,8 @@ namespace EasyCom.Connection.Serial
         {
             try
             {
-                SerialPort.Close();
+                
+                App.Current.Dispatcher.InvokeAsync (()=>{ SerialPort.Close(); });
                 PageSetting pageSetting = currentTab.ConnectionType.AdvanceSettingsPage as PageSetting;
                 pageSetting.ReleasePort (currentTab);
             }
@@ -163,9 +164,14 @@ namespace EasyCom.Connection.Serial
         {
 
         }
-        public void SendData(byte[] data)
+        public void SendData(byte[] data,bool async=true)
         {
-            SerialPort.BaseStream.WriteAsync(data, 0, data.Length);
+            if (SerialPort.IsOpen == false)
+                return;
+            if (async)
+                SerialPort.BaseStream.WriteAsync(data, 0, data.Length);
+            else
+                SerialPort.BaseStream.Write(data, 0, data.Length);
             SerialPort.DtrEnable = true;
         }
 
