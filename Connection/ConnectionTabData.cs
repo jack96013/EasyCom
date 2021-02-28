@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Documents;
@@ -50,9 +51,10 @@ namespace EasyCom
             ToolBarSetting.ReceiveShowTime = true;
             ToolBarSetting.ReceiveLineEnding = mainWindowOption.LineEndingTypeList.ElementAt(1);
             ToolBarSetting.ReceiveTimeOut = 20;
-            ToolBarSetting.ReceiveDecodeType = mainWindowOption.DecodingTypeList.ElementAt(1);
+            ToolBarSetting.ReceiveEncodingType = mainWindowOption.EncodingTypeList.ElementAt(1);
 
             ToolBarSetting.SendLineEnding = mainWindowOption.LineEndingTypeList.ElementAt(1);
+            ToolBarSetting.SendEncodingType = mainWindowOption.EncodingTypeList.ElementAt(1);
             ToolBarSetting.SendHex = false;
             ToolBarSetting.SendShowOnReceive = true;
 
@@ -255,12 +257,12 @@ namespace EasyCom
             //String ConvertedData = Encoding.UTF8.GetString(data);
 
             string ConvertedData;
-            if (ToolBarSetting.ReceiveDecodeType.Name == "HEX")
+            if (ToolBarSetting.ReceiveEncodingType.Name == "HEX")
             {
                 ConvertedData = BitConverter.ToString(data).Replace("-", " ");
             }
             else
-                ConvertedData = ToolBarSetting.ReceiveDecodeType.Value.GetString(data);
+                ConvertedData = ToolBarSetting.ReceiveEncodingType.Value.GetString(data);
             AppendTextToReceiveWindow(true, ConvertedData, time);
 
         }
@@ -269,11 +271,38 @@ namespace EasyCom
         {
             if (ConnectionObject != null && ConnectionObject.Connected)
             {
-                if (ToolBarSetting.SendLineEnding.Value != null)
+                byte[] dataBytes;
+                if (ToolBarSetting.SendEncodingType.Name != "HEX")
                 {
-                    data += ToolBarSetting.SendLineEnding.Value;
+                    dataBytes = ToolBarSetting.SendEncodingType.Value.GetBytes(data);
+                    if (ToolBarSetting.SendLineEnding.Value != null)
+                    {
+                        data += ToolBarSetting.SendLineEnding.Value;
+                    }
                 }
-                byte[] dataBytes = Encoding.UTF8.GetBytes(data);
+                else
+                {
+                    if (data.EndsWith(" "))
+                    {
+                        data = data.Substring(0,data.Length-1);
+                    }
+                    
+                    data = data.Replace("0x","");
+                    data = data.Replace("h", "");
+                    if (ToolBarSetting.SendLineEnding.Value != null)
+                    {
+                        data += ToolBarSetting.SendLineEnding.Value;
+                    }
+                    data = data.Replace("\r", " 0D");
+                    data = data.Replace("\n", " 0A");
+
+                    bool successful = StringToByteArray(data,out dataBytes);
+                    if (!successful)
+                        return;
+                }
+
+
+                
                 ToolBarSetting.ReceiveWindowTextUpdated = true;
                 ConnectionObject.SendData(dataBytes);
                 if (ToolBarSetting.SendShowOnReceive)
@@ -282,6 +311,42 @@ namespace EasyCom
                 }
             }
         }
+
+        public static bool StringToByteArray(string hex,out byte[] array)
+        {
+            array = new byte[hex.Length/2];
+            bool successful = true;
+            if (hex.Length % 3 != 2)
+                return false;
+            for (int i = 0; i < hex.Length; i++)
+            {
+                if (i % 3 == 2)
+                {
+                    if (hex[i] != ' ')
+                    {
+                        successful = false;
+                        break;
+                    }
+                }
+                else if (i % 3 ==0)
+                {
+                    string hexValue = hex.Substring(i, 2);
+                    Console.WriteLine(hexValue);
+                    Match match = Regex.Match(hexValue, "^[A-Fa-f0-9]+$");
+                    if (match.Success)
+                    {
+                        array[i / 2] = Convert.ToByte(hexValue, 16);
+                    }
+                    else
+                    {
+                        successful = false;
+                        break;
+                    }
+                }
+            }
+            return successful;
+        }
+
 
         public void SendFile()
         {

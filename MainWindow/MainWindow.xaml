@@ -209,8 +209,9 @@
                                         </DockPanel>
 
                                         <DockPanel Height="27">
-                                            <Label Content="HEX" Width="120"/>
-                                            <ToggleButton x:Name="Toggle_Send_Hex" Style="{StaticResource MaterialDesignSwitchToggleButton}" ToolTip="Default ToggleButton Style" />
+                                            <Label Content="編碼" Width="90"/>
+                                            <!--<ToggleButton x:Name="Toggle_Send_Hex" Style="{StaticResource MaterialDesignSwitchToggleButton}" ToolTip="Default ToggleButton Style" />-->
+                                            <ComboBox x:Name="Combo_Send_Encoding" ItemsSource="{Binding }"/>
                                         </DockPanel>
                                         <DockPanel Height="27">
                                             <Label Content="顯示在接收欄位" Width="120"/>

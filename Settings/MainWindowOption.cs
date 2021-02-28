@@ -2,6 +2,7 @@
 using EasyCom.Connection.Serial;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,11 +14,10 @@ namespace EasyCom.Settings
     {
         private MainWindow mainWindow = null;
         private List<LineEndingItem> lineEndingTypeList = new List<LineEndingItem>();
-        private List<DecodingItem> decodingTypeList = new List<DecodingItem>();
         //Properties
         public List<ConnectionType> ConnectionTypes { get; } = new List<ConnectionType>();
         public List<LineEndingItem> LineEndingTypeList { get => lineEndingTypeList; set => lineEndingTypeList = value; }
-        public List<DecodingItem> DecodingTypeList { get => decodingTypeList; set => decodingTypeList = value; }
+        public List<EncodingItem> EncodingTypeList { get;} = new List<EncodingItem>();
         //Default
         private int connectionTypesDefault = 0;
         private int lineEndingTypeDefault = 0;
@@ -27,7 +27,8 @@ namespace EasyCom.Settings
             this.mainWindow = mainWindow;
             ConnectionTypeListInit();
             LineEndingTypeListInit();
-            DecodingTypeListInit();
+            EncodingTypeListInit();
+            
         }
 
         public void ConnectionTypeListInit()
@@ -56,12 +57,11 @@ namespace EasyCom.Settings
             LineEndingTypeList.Add(new LineEndingItem("CRLF", "\r\n"));
         }
 
-        public void DecodingTypeListInit()
+        public void EncodingTypeListInit()
         {
-            DecodingTypeList.Add(new DecodingItem("ASCII", Encoding.ASCII));
-            DecodingTypeList.Add(new DecodingItem("UTF8", Encoding.UTF8));
-            DecodingTypeList.Add(new DecodingItem("HEX", null));
-            
+            EncodingTypeList.Add(new EncodingItem("ASCII", Encoding.ASCII));
+            EncodingTypeList.Add(new EncodingItem("UTF8", Encoding.UTF8));
+            EncodingTypeList.Add(new EncodingItem("HEX", null));
         }
 
         public ConnectionType getConnectionTypeByName(string name)
@@ -84,11 +84,11 @@ namespace EasyCom.Settings
             }
         }
 
-        public class DecodingItem
+        public class EncodingItem
         {
             public string Name { get; set; }=null;
             public Encoding Value { get; set; } =null;
-            public DecodingItem(string name, Encoding value)
+            public EncodingItem(string name, Encoding value)
             {
                 this.Name = name;
                 this.Value = value;
@@ -98,5 +98,52 @@ namespace EasyCom.Settings
                 return Name;
             }
         }
+
+       
+
+        //public class SendEncodingViewModel
+        //{
+        //    private ObservableCollection<Person> _persons;
+
+        //    public ObservableCollection<Person> Persons
+        //    {
+        //        get { return _persons; }
+        //        set { _persons = value; }
+        //    }
+        //    private Person _sperson;
+
+        //    public Person SPerson
+        //    {
+        //        get { return _sperson; }
+        //        set { _sperson = value; }
+        //    }
+
+        //    public SendEncodingViewModel()
+        //    {
+        //        Persons = new ObservableCollection<Person>()
+        //        {
+        //            new Person(){ Id=1, Name="Nirav"}
+        //            ,new Person(){Id=2,Name="Kapil"}
+        //            ,new Person(){Id=3 , Name="Arvind"}
+        //            ,new Person(){Id=4 , Name="Rajan"}
+        //        };
+        //    }
+
+        //}
+
+        //public class BasicItem<T>
+        //{
+        //    public string Name { get; set; } = null;
+        //    public Encoding Value { get; set; } = null;
+        //    public BasicItem<T>(string name, Encoding value)
+        //    {
+        //        this.Name = name;
+        //        this.Value = value;
+        //    }
+        //    public override string ToString()
+        //    {
+        //        return Name;
+        //    }
+        //}
     }
 }

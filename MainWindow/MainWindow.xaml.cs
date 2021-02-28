@@ -50,7 +50,6 @@ namespace EasyCom
 
         public MainWindow()
         {
-            //Connection_Setting_Serial_Page.parentWindow = this;
             InitializeComponent();
             CustomStrManager = new CustomStr.CustomStrManager(this);
             PopupDialogHost = new PopupDialogHost(this.Popup_DialogFrame, this.Main);
@@ -79,7 +78,6 @@ namespace EasyCom
                 updater.CheckNewVersion();
             }
             
-            //Handle startUpCommand;
             controlCommandHandle = new ControlCommandHandle(this);
             if (((App)Application.Current).ShowConsole)
             {
@@ -88,11 +86,7 @@ namespace EasyCom
                 console.Start();
                 
             }
-            //Debug.WriteLine(this.ComboBox_Connection_Type.Items.Count);
             this.Loaded += (s, e) => { controlCommandHandle.StartUpCommandHandle(); };
-            //this.ComboBox_Connection_Type.SelectedIndex = 0;
-            //controlCommandHandle.StartUpCommandHandle();
-            //ComboBox_Connection_Type. += ((s,e)=> { Debug.WriteLine("trig"); });
             Application.Current.Exit += App_Exit;
 
 
@@ -107,8 +101,10 @@ namespace EasyCom
         private void SettingWidgetsInit()
         {
             Combo_Receive_LineEnding.ItemsSource = Options.LineEndingTypeList;
+            
             Combo_Send_LineEnding.ItemsSource = Options.LineEndingTypeList;
-            Combo_Receive_DecodeType.ItemsSource = Options.DecodingTypeList;
+            Combo_Receive_DecodeType.ItemsSource = Options.EncodingTypeList;
+            Combo_Send_Encoding.ItemsSource = Options.EncodingTypeList;
 
             Toggle_Receive_AutoSpilt.Checked += Toggle_Receive_AutoSpilt_CheckedChange;
             Toggle_Receive_AutoSpilt.Unchecked += Toggle_Receive_AutoSpilt_CheckedChange;
@@ -119,8 +115,9 @@ namespace EasyCom
             Combo_Receive_DecodeType.SelectionChanged += Combo_Receive_DecodeType_SelectionChanged;
 
             Combo_Send_LineEnding.SelectionChanged += Combo_Send_LineEnding_SelectionChanged;
-            Toggle_Send_Hex.Checked += Toggle_Send_Hex_CheckedChange;
-            Toggle_Send_Hex.Unchecked += Toggle_Send_Hex_CheckedChange;
+            Combo_Send_Encoding.SelectionChanged += Combo_Send_Encoding_SelectionChanged;
+            //Toggle_Send_Hex.Checked += Toggle_Send_Hex_CheckedChange;
+            //Toggle_Send_Hex.Unchecked += Toggle_Send_Hex_CheckedChange;
             Toggle_Send_ShowOnReceive.Checked += Toggle_Send_ShowOnReceive_CheckedChange;
             Toggle_Send_ShowOnReceive.Unchecked += Toggle_Send_ShowOnReceive_CheckedChange;
 
@@ -150,6 +147,12 @@ namespace EasyCom
             Button_Send_File.Click += Button_Send_File_Click;
             TextBox_Send_FileSize.TextChanged += TextBox_Send_FileSize_TextChanged;
             TextBox_Send_FileInterval.TextChanged += TextBox_Send_FileInterval_TextChanged;
+        }
+
+        private void Combo_Send_Encoding_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            connectionTabHelper.CurrentTabData.ToolBarSetting.SendEncodingType = Combo_Send_Encoding.SelectedItem as EncodingItem;
+
         }
 
         private void TextBox_Send_FileInterval_TextChanged(object sender, TextChangedEventArgs e)
@@ -453,7 +456,7 @@ namespace EasyCom
 
         private void Combo_Receive_DecodeType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ConnectionTabHelper.CurrentTabData.ToolBarSetting.ReceiveDecodeType = (DecodingItem)((ComboBox)sender).SelectedItem;
+            ConnectionTabHelper.CurrentTabData.ToolBarSetting.ReceiveEncodingType = (EncodingItem)((ComboBox)sender).SelectedItem;
         }
 
         //If Setting has already be changed in AdvancedSettingPage , this function will be called

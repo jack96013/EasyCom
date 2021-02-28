@@ -169,6 +169,7 @@
     </Compile>
     <Compile Include="General\ControlCommandHandle.cs" />
     <Compile Include="Connection\ConnectionTabData.cs" />
+    <Compile Include="RelayCommand.cs" />
     <Compile Include="Settings\MainWindowOption.cs" />
     <Compile Include="Settings\SettingBase.cs" />
     <Compile Include="Settings\ToolBarSetting.cs" />

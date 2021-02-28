@@ -294,10 +294,11 @@ namespace EasyCom
             CurrentWindow.Toggle_Receive_ShowTime.IsChecked = toolBarSettings.ReceiveShowTime;
             CurrentWindow.Combo_Receive_LineEnding.SelectedItem = toolBarSettings.ReceiveLineEnding;
             CurrentWindow.TextBox_Receive_Timeout.Text = toolBarSettings.ReceiveTimeOut.ToString(CultureInfo.InvariantCulture);
-            CurrentWindow.Combo_Receive_DecodeType.SelectedItem = toolBarSettings.ReceiveDecodeType;
+            CurrentWindow.Combo_Receive_DecodeType.SelectedItem = toolBarSettings.ReceiveEncodingType;
 
             CurrentWindow.Combo_Send_LineEnding.SelectedItem = toolBarSettings.SendLineEnding;
-            CurrentWindow.Toggle_Send_Hex.IsChecked = toolBarSettings.SendHex;
+            CurrentWindow.Combo_Send_Encoding.SelectedItem = toolBarSettings.SendEncodingType;
+            //CurrentWindow.Toggle_Send_Hex.IsChecked = toolBarSettings.SendHex;
             CurrentWindow.Toggle_Send_ShowOnReceive.IsChecked = toolBarSettings.SendShowOnReceive;
 
             CurrentWindow.CheckBox_AutoSender_Enable.IsChecked = toolBarSettings.SendAutoSenderEnable;

@@ -16,9 +16,10 @@ namespace EasyCom.Settings
         public bool ReceiveShowTime { get ; set ; }
         public MainWindowOption.LineEndingItem ReceiveLineEnding { get ; set ; }
         public uint ReceiveTimeOut { get ; set ; }
-        public MainWindowOption.DecodingItem ReceiveDecodeType { get ; set ; }
+        public MainWindowOption.EncodingItem ReceiveEncodingType { get ; set ; }
         public MainWindowOption.LineEndingItem SendLineEnding { get ; set ; }
         public bool SendHex { get ; set ; }
+        public MainWindowOption.EncodingItem SendEncodingType { get; set; }
         public bool SendShowOnReceive { get ; set ; }
         public bool SendAutoSenderEnable { get ; set; }
         public uint SendAutoSenderInterval { get ; set ; }
