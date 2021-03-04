@@ -12,7 +12,7 @@ namespace EasyCom
         bool Connected { get; }
         void Open();
         void Close();
-        void SendData(byte[] data,bool async=true);
+        bool SendData(byte[] data,bool async=true);
         bool AllowApplySettingsWithoutClose { get; }
         bool ApplySettings();
         

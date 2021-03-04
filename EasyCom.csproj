@@ -135,6 +135,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AutoSendRobot.cs" />
     <Compile Include="Connection\ConnectionType.cs" />
     <Compile Include="Connection\IConnectionSettings.cs" />
     <Compile Include="Connection\IConnectionCommand.cs" />

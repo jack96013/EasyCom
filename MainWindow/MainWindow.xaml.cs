@@ -121,13 +121,15 @@ namespace EasyCom
             Toggle_Send_ShowOnReceive.Checked += Toggle_Send_ShowOnReceive_CheckedChange;
             Toggle_Send_ShowOnReceive.Unchecked += Toggle_Send_ShowOnReceive_CheckedChange;
 
-            CheckBox_AutoSender_Enable.Checked += CheckBox_AutoSender_Enable_CheckedChange;
-            CheckBox_AutoSender_Enable.Unchecked += CheckBox_AutoSender_Enable_CheckedChange;
+            //CheckBox_AutoSender_Enable.Checked += CheckBox_AutoSender_Enable_CheckedChange;
+            //CheckBox_AutoSender_Enable.Unchecked += CheckBox_AutoSender_Enable_CheckedChange;
             TextBox_AutoSender_Interval.TextChanged += TextBox_AutoSender_Interval_TextChanged;
 
-            CheckBox_AutoSender_AmountEnable.Checked += CheckBox_AutoSender_AmountEnable_CheckedChange; ;
-            CheckBox_AutoSender_AmountEnable.Unchecked += CheckBox_AutoSender_AmountEnable_CheckedChange;
+            //CheckBox_AutoSender_AmountEnable.Checked += CheckBox_AutoSender_AmountEnable_CheckedChange; ;
+            //CheckBox_AutoSender_AmountEnable.Unchecked += CheckBox_AutoSender_AmountEnable_CheckedChange;
             TextBox_AutoSender_Amount.TextChanged += TextBox_AutoSender_Amount_TextChanged;
+            Button_AutoSender.Click += Button_AutoSender_Click;
+
 
             TextBox_Send_Text.TextChanged += TextBox_Send_Text_TextChanged;
             TextBox_Send_FilePath.TextChanged += TextBox_Send_Path_TextChanged;
@@ -147,6 +149,48 @@ namespace EasyCom
             Button_Send_File.Click += Button_Send_File_Click;
             TextBox_Send_FileSize.TextChanged += TextBox_Send_FileSize_TextChanged;
             TextBox_Send_FileInterval.TextChanged += TextBox_Send_FileInterval_TextChanged;
+        }
+
+        private void Button_AutoSender_Click(object sender, RoutedEventArgs e)
+        {
+            ToolBarSetting setting = connectionTabHelper.CurrentTabData.ToolBarSetting;
+            bool enable = setting.SendAutoSenderEnable;
+            if (enable)
+            {
+                connectionTabHelper.CurrentTabData.AutoSendRobot.Stop();
+            }
+            else
+            {
+                connectionTabHelper.CurrentTabData.AutoSendRobot.Start();
+            }
+            setting.SendAutoSenderEnable = !enable;
+            UpdateAutoSenderInfo(null,null);
+        }
+
+        public void UpdateAutoSenderInfo(object sender, object e)
+        {
+            ToolBarSetting setting = connectionTabHelper.CurrentTabData.ToolBarSetting;
+            string targetAmouns = setting.SendAutoSenderAmount.ToString();
+            if (setting.SendAutoSenderAmount == 0)
+            {
+                targetAmouns = "無限";
+            }
+            Label_AutoSender_INFO.Content = String.Format(CultureInfo.InvariantCulture, " {0} / {1}", setting.SendAutoSenderCurrentAmount, targetAmouns);
+            if (setting.SendAutoSenderEnable)
+            {
+                this.Button_AutoSender.Content = "X";
+                this.TextBox_AutoSender_Amount.IsEnabled = false;
+                this.TextBox_AutoSender_Interval.IsEnabled = false;
+
+            }
+            else
+            {
+                this.Button_AutoSender.Content = "GO";
+                this.TextBox_AutoSender_Amount.IsEnabled = true;
+                this.TextBox_AutoSender_Interval.IsEnabled = true;
+            }
+            
+
         }
 
         private void Combo_Send_Encoding_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -406,7 +450,15 @@ namespace EasyCom
 
         private void TextBox_AutoSender_Amount_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ConnectionTabHelper.CurrentTabData.ToolBarSetting.SendAutoSenderAmount = uint.Parse(((TextBox)sender).Text);
+            bool result = uint.TryParse(((TextBox)sender).Text, out uint val);
+            if (result)
+            {
+                ConnectionTabHelper.CurrentTabData.ToolBarSetting.SendAutoSenderAmount = val;
+            }
+            else
+                ((TextBox)sender).Text = "0";
+
+            UpdateAutoSenderInfo(null,null);
         }
 
         private void CheckBox_AutoSender_Enable_CheckedChange(object sender, RoutedEventArgs e)
@@ -416,7 +468,15 @@ namespace EasyCom
 
         private void TextBox_AutoSender_Interval_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ConnectionTabHelper.CurrentTabData.ToolBarSetting.SendAutoSenderInterval = uint.Parse(((TextBox)sender).Text);
+            bool result = uint.TryParse(((TextBox)sender).Text, out uint val);
+            if (result)
+            {
+                ConnectionTabHelper.CurrentTabData.ToolBarSetting.SendAutoSenderInterval = val;
+            }
+            else
+                ((TextBox)sender).Text = "100";
+
+
         }
 
         private void Toggle_Send_Hex_CheckedChange(object sender, RoutedEventArgs e)

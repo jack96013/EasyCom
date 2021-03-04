@@ -209,27 +209,33 @@
                                         </DockPanel>
 
                                         <DockPanel Height="27">
-                                            <Label Content="編碼" Width="90"/>
+                                            <Label Content="編碼" Width="90" Padding="4,5,4,0"/>
                                             <!--<ToggleButton x:Name="Toggle_Send_Hex" Style="{StaticResource MaterialDesignSwitchToggleButton}" ToolTip="Default ToggleButton Style" />-->
                                             <ComboBox x:Name="Combo_Send_Encoding" ItemsSource="{Binding }"/>
                                         </DockPanel>
                                         <DockPanel Height="27">
-                                            <Label Content="顯示在接收欄位" Width="120"/>
+                                            <Label Content="顯示在接收欄位" Width="120" Padding="4,5,4,4"/>
                                             <ToggleButton x:Name="Toggle_Send_ShowOnReceive" Style="{StaticResource MaterialDesignSwitchToggleButton}" ToolTip="Default ToggleButton Style" />
                                         </DockPanel>
                                     </StackPanel>
                                     <Border Grid.Column="1" BorderThickness="1,0,0,0" BorderBrush="#34000000"/>
                                     <StackPanel Grid.Column="2" Margin="3">
                                         <DockPanel Margin="0,2.5,0,0" VerticalAlignment="Center">
-                                            <CheckBox x:Name="CheckBox_AutoSender_Enable" Content="定時發送" Margin="2.5,0,0,0" VerticalAlignment="Bottom" Padding="4,1,0,0" Width="80" VerticalContentAlignment="Center"/>
-                                            <TextBox x:Name="TextBox_AutoSender_Interval" TextWrapping="Wrap" Margin="5,0,0,0" Width="80" Padding="1,1,0,0"/>
-                                            <Label Content="ms" Width="19" Margin="2.5,0,0,0" DockPanel.Dock="Right" Padding="0,1,0,0" VerticalAlignment="Bottom"/>
+                                            <Label Content="發送間格" Margin="2.5,0,0,0" VerticalAlignment="Bottom" Padding="4,1,0,0" Width="80" VerticalContentAlignment="Center" Height="27"/>
+                                            <TextBox x:Name="TextBox_AutoSender_Interval" TextWrapping="Wrap" Margin="5,0,0,0" Padding="1,1,0,0" Width="57"/>
+                                            <Label Content="ms" Width="19" Margin="2.5,0,0,0" DockPanel.Dock="Right" Padding="0,1,0,0" VerticalAlignment="Bottom" Height="27" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
                                         </DockPanel>
                                         <DockPanel Margin="0,2.5,0,0" VerticalAlignment="Center">
-                                            <CheckBox x:Name="CheckBox_AutoSender_AmountEnable" Content="總共" Margin="2.5,0,0,0" Padding="4,1,0,0" Width="80" VerticalAlignment="Bottom"/>
-                                            <TextBox x:Name="TextBox_AutoSender_Amount" TextWrapping="Wrap" Margin="5,0,0,0" Width="80" Padding="1,1,0,0"/>
-                                            <Label Content="次" Width="19" Margin="2.5,0,0,0" Padding="0,1,0,0" VerticalAlignment="Bottom"/>
+                                            <Label Content="總共" Margin="2.5,0,0,0" Padding="4,1,0,0" Width="80" VerticalAlignment="Bottom" Height="27" VerticalContentAlignment="Center"/>
+                                            <TextBox x:Name="TextBox_AutoSender_Amount" TextWrapping="Wrap" Margin="5,0,0,0" Width="57" Padding="1,1,0,0"/>
+                                            <Label Content="次" Width="19" Margin="2.5,0,0,0" Padding="0,1,0,0" VerticalAlignment="Bottom" Height="27" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
                                         </DockPanel>
+                                        <Label Content="0 為不限次數" HorizontalContentAlignment="Right" FontSize="10"/>
+                                        <DockPanel Margin="0,2.5,0,0" VerticalAlignment="Center">
+                                            <Label x:Name="Label_AutoSender_INFO" Content="0 / 無限" HorizontalAlignment="Center" Width="92" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                                            <Button x:Name="Button_AutoSender" Content="B" Height="27" Width="59" HorizontalAlignment="Right" Margin="0,0,5,0"/>
+                                        </DockPanel>
+                                        
                                     </StackPanel>
                                 </Grid>
 
@@ -244,6 +250,7 @@
                                     <TextBox x:Name="TextBox_Send_FileInterval" VerticalAlignment="Top" Margin="80,30,0,0" HorizontalAlignment="Left" Width="60"/>
                                 </Grid>
                             </TabItem>
+                            
                         </TabControl>
 
                         <Grid Grid.Column="3" Margin="5,0,0,0">

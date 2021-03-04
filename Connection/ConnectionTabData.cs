@@ -25,6 +25,8 @@ namespace EasyCom
         public IConnectionSettings ConnectionSettings { get; set; } //For Connected ConnectionObject
 
         public ToolBarSetting ToolBarSetting { get; set; } = new ToolBarSetting();
+        public AutoSendRobot AutoSendRobot { get; } = null;
+
 
         public ConnectionTabData(ConnectionTabHelper connectionTabHelper)
         {
@@ -36,6 +38,9 @@ namespace EasyCom
 
             //ReceiveFrame.Content = ReceivePage;
             this.TabItem = new ConnectionTabItem(this);
+            AutoSendRobot = new AutoSendRobot(this);
+            AutoSendRobot.DataChanged = parentWindow.UpdateAutoSenderInfo;
+
             TabItem.Content = tabHelper.ReceivePageFrame;
             SetDefault();
         }
@@ -53,13 +58,13 @@ namespace EasyCom
             ToolBarSetting.ReceiveTimeOut = 20;
             ToolBarSetting.ReceiveEncodingType = mainWindowOption.EncodingTypeList.ElementAt(1);
 
-            ToolBarSetting.SendLineEnding = mainWindowOption.LineEndingTypeList.ElementAt(1);
+            ToolBarSetting.SendLineEnding = mainWindowOption.LineEndingTypeList.ElementAt(0);
             ToolBarSetting.SendEncodingType = mainWindowOption.EncodingTypeList.ElementAt(1);
             ToolBarSetting.SendHex = false;
             ToolBarSetting.SendShowOnReceive = true;
 
             ToolBarSetting.SendAutoSenderEnable = false;
-            ToolBarSetting.SendAutoSenderInterval = 1;
+            ToolBarSetting.SendAutoSenderInterval = 10;
             ToolBarSetting.SendAutoSenderAmountEnable = false;
             ToolBarSetting.SendAutoSenderAmount = 0;
 
@@ -233,12 +238,15 @@ namespace EasyCom
 
         }
 
-        public void onDissconnect()
+        public void OnDissconnect()
         {
             TabItem.Available = false;
             parentWindow.Button_Connection_Connect_Available = false;
             ToolBarSetting.Connected = false;
 
+            //ToolBarSetting.SendAutoSenderEnable = false;
+            AutoSendRobot.Stop();
+            parentWindow.UpdateAutoSenderInfo(null,null);
 
         }
 
@@ -267,18 +275,19 @@ namespace EasyCom
 
         }
 
-        public void SendData(string data, DateTime time)
+        public bool SendData(string data, DateTime time,bool async=true)
         {
+            
             if (ConnectionObject != null && ConnectionObject.Connected)
             {
                 byte[] dataBytes;
                 if (ToolBarSetting.SendEncodingType.Name != "HEX")
                 {
-                    dataBytes = ToolBarSetting.SendEncodingType.Value.GetBytes(data);
                     if (ToolBarSetting.SendLineEnding.Value != null)
                     {
                         data += ToolBarSetting.SendLineEnding.Value;
                     }
+                    dataBytes = ToolBarSetting.SendEncodingType.Value.GetBytes(data);
                 }
                 else
                 {
@@ -298,18 +307,18 @@ namespace EasyCom
 
                     bool successful = StringToByteArray(data,out dataBytes);
                     if (!successful)
-                        return;
+                        return false;
                 }
-
-
                 
                 ToolBarSetting.ReceiveWindowTextUpdated = true;
-                ConnectionObject.SendData(dataBytes);
+                bool success = ConnectionObject.SendData(dataBytes, async);
                 if (ToolBarSetting.SendShowOnReceive)
                 {
                     AppendTextToReceiveWindow(false, data, time);
                 }
+                return success;
             }
+            return false;
         }
 
         public static bool StringToByteArray(string hex,out byte[] array)
@@ -474,5 +483,13 @@ namespace EasyCom
             //this.TabItem.Focus();
             this.tabHelper.SelectedTab = this;
         }
+
+        public bool IsSelected
+        {
+            get {
+                return this.tabHelper.SelectedTab == this;
+            }
+        }
+        
     }
 }

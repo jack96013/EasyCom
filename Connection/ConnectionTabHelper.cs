@@ -27,8 +27,6 @@ namespace EasyCom
         public ManualResetEvent ReceiveWindowRefreshLock = new ManualResetEvent(true);
         public ManualResetEvent ReceiveWindowRefreshLock_Show = new ManualResetEvent(true);
 
-        private ConnectionTabData selectedTab = null;
-
         private bool autoNewTab = false;
 
         private int Count = 0;
@@ -301,9 +299,9 @@ namespace EasyCom
             //CurrentWindow.Toggle_Send_Hex.IsChecked = toolBarSettings.SendHex;
             CurrentWindow.Toggle_Send_ShowOnReceive.IsChecked = toolBarSettings.SendShowOnReceive;
 
-            CurrentWindow.CheckBox_AutoSender_Enable.IsChecked = toolBarSettings.SendAutoSenderEnable;
+            //CurrentWindow.CheckBox_AutoSender_Enable.IsChecked = toolBarSettings.SendAutoSenderEnable;
             CurrentWindow.TextBox_AutoSender_Interval.Text = toolBarSettings.SendAutoSenderInterval.ToString(CultureInfo.InvariantCulture);
-            CurrentWindow.CheckBox_AutoSender_AmountEnable.IsChecked = toolBarSettings.SendAutoSenderAmountEnable;
+            //CurrentWindow.CheckBox_AutoSender_AmountEnable.IsChecked = toolBarSettings.SendAutoSenderAmountEnable;
             CurrentWindow.TextBox_AutoSender_Amount.Text = toolBarSettings.SendAutoSenderAmount.ToString(CultureInfo.InvariantCulture);
 
             CurrentWindow.TextBox_Send_Text.Text = toolBarSettings.SendText;

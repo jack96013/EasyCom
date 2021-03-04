@@ -119,7 +119,7 @@ namespace EasyCom.Connection.Serial
                         () => { currentTab.Connect(); },
                         PackIconKind.CloseCircleOutline);
             currentTab.onConnectFail();
-            currentTab.onDissconnect();
+            currentTab.OnDissconnect();
         }
 
         private void ShowDialog(string title,string content,string redoButtonText,Action buttonRedoAction,MaterialDesignThemes.Wpf.PackIconKind icon)
@@ -147,7 +147,7 @@ namespace EasyCom.Connection.Serial
             {
 
             }
-            currentTab.onDissconnect();
+            currentTab.OnDissconnect();
         }
 
         public void Stop()
@@ -164,15 +164,33 @@ namespace EasyCom.Connection.Serial
         {
 
         }
-        public void SendData(byte[] data,bool async=true)
+        public bool SendData(byte[] data,bool async=true)
         {
             if (SerialPort.IsOpen == false)
-                return;
-            if (async)
-                SerialPort.BaseStream.WriteAsync(data, 0, data.Length);
-            else
-                SerialPort.BaseStream.Write(data, 0, data.Length);
-            SerialPort.DtrEnable = true;
+                return false;
+            try
+            {
+                if (async)
+                    SerialPort.BaseStream.WriteAsync(data, 0, data.Length);
+                else
+                {
+                    //FIXME: WriteByte / Write hang in thread.
+                    //foreach (var item in data)
+                    //{
+                    //    SerialPort.BaseStream.WriteByte(item);
+                    //}
+                    SerialPort.BaseStream.Write(data, 0, data.Length);
+                }
+                   // SerialPort.BaseStream.Write(data, 0, data.Length);
+
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Except");
+                return false;
+            }
+
+            return true;
         }
 
         private void DataReceivedHandler(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
