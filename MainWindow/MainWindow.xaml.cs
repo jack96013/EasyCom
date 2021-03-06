@@ -178,14 +178,14 @@ namespace EasyCom
             Label_AutoSender_INFO.Content = String.Format(CultureInfo.InvariantCulture, " {0} / {1}", setting.SendAutoSenderCurrentAmount, targetAmouns);
             if (setting.SendAutoSenderEnable)
             {
-                this.Button_AutoSender.Content = "X";
+                this.Button_AutoSender.Content = new MaterialDesignThemes.Wpf.PackIcon() { Kind = MaterialDesignThemes.Wpf.PackIconKind.Stop };
                 this.TextBox_AutoSender_Amount.IsEnabled = false;
                 this.TextBox_AutoSender_Interval.IsEnabled = false;
 
             }
             else
             {
-                this.Button_AutoSender.Content = "GO";
+                this.Button_AutoSender.Content = new MaterialDesignThemes.Wpf.PackIcon() {Kind = MaterialDesignThemes.Wpf.PackIconKind.MenuRightOutline };
                 this.TextBox_AutoSender_Amount.IsEnabled = true;
                 this.TextBox_AutoSender_Interval.IsEnabled = true;
             }

@@ -233,7 +233,9 @@
                                         <Label Content="0 為不限次數" HorizontalContentAlignment="Right" FontSize="10"/>
                                         <DockPanel Margin="0,2.5,0,0" VerticalAlignment="Center">
                                             <Label x:Name="Label_AutoSender_INFO" Content="0 / 無限" HorizontalAlignment="Center" Width="92" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                                            <Button x:Name="Button_AutoSender" Content="B" Height="27" Width="59" HorizontalAlignment="Right" Margin="0,0,5,0"/>
+                                            <Button x:Name="Button_AutoSender" Height="27" Width="27" HorizontalAlignment="Right" Margin="0,0,5,0" Padding="4">
+                                                <materialDesign:PackIcon Kind="Stop" />
+                                            </Button>
                                         </DockPanel>
                                         
                                     </StackPanel>
