@@ -85,11 +85,11 @@ namespace EasyCom.Connection.Serial
                     stringBuilder.Append(Description);
                 }
 
-                else if (Used)
+                if (Used)
                 {
                     stringBuilder.Append(" (");
                     stringBuilder.Append(UsedTab.TabItem.Title);
-                    stringBuilder.Append("占用");
+                    stringBuilder.Append(" 占用");
                     stringBuilder.Append(")");
                 }
             }

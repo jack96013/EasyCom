@@ -5,6 +5,9 @@ using System.IO.Ports;
 using System.Globalization;
 using EasyCom.General;
 using MaterialDesignThemes.Wpf;
+using System.Threading.Tasks;
+using System.Threading;
+using System.IO;
 
 namespace EasyCom.Connection.Serial
 {
@@ -18,6 +21,9 @@ namespace EasyCom.Connection.Serial
 
         public Stopwatch stopwatch1 = new Stopwatch();
 
+        private Task readTask;
+        private CancellationTokenSource cancellationTokenSource ;
+
 
         public bool Connected {
             get
@@ -30,12 +36,12 @@ namespace EasyCom.Connection.Serial
         {
             this.currentTab = connectionTab;
             this.SerialPort = new SerialPort();
-            SerialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
+
+            //SerialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
+            //readTask = new Task(Read);
 
             toolBarSettings = currentTab.ToolBarSetting;
             currentTab.ToolBarSetting.ConnectionSettings = (Settings)toolBarSettings.ConnectionSettings;
-            Debug.WriteLine(this.GetHashCode(),"Serial Create");
-            //SerialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
         }
 
         /// <summary>
@@ -59,6 +65,8 @@ namespace EasyCom.Connection.Serial
                 SerialPort.Handshake = ConnectionSettings.Handshake.Value;
 
                 SerialPort.ReadTimeout = Convert.ToInt32(toolBarSettings.ReceiveTimeOut);
+                
+                Console.WriteLine(SerialPort.ReadTimeout);
             }
             catch (System.IO.IOException e)
             {
@@ -95,6 +103,9 @@ namespace EasyCom.Connection.Serial
                     currentTab.onConnectSuccessful();
                     PageSetting pageSetting = currentTab.ConnectionType.AdvanceSettingsPage as PageSetting;
                     pageSetting.UsePort(currentTab);
+                    cancellationTokenSource = new CancellationTokenSource();
+                    readTask = new Task(Read);
+                    readTask.Start();
                 }
                 catch (UnauthorizedAccessException e)
                 {
@@ -136,12 +147,13 @@ namespace EasyCom.Connection.Serial
 
         public void Close()
         {
+            
             try
             {
-                
+                cancellationTokenSource.Cancel();
                 App.Current.Dispatcher.InvokeAsync (()=>{ SerialPort.Close(); });
                 PageSetting pageSetting = currentTab.ConnectionType.AdvanceSettingsPage as PageSetting;
-                pageSetting.ReleasePort (currentTab);
+                pageSetting.ReleasePort(currentTab);
             }
             catch (Exception e)
             {
@@ -155,15 +167,6 @@ namespace EasyCom.Connection.Serial
             
         }
 
-        public void StartReading()
-        {
-            
-
-        }
-        public void StoptReading()
-        {
-
-        }
         public bool SendData(byte[] data,bool async=true)
         {
             if (SerialPort.IsOpen == false)
@@ -174,43 +177,29 @@ namespace EasyCom.Connection.Serial
                     SerialPort.BaseStream.WriteAsync(data, 0, data.Length);
                 else
                 {
-                    //FIXME: WriteByte / Write hang in thread.
-                    //foreach (var item in data)
-                    //{
-                    //    SerialPort.BaseStream.WriteByte(item);
-                    //}
+                    
                     SerialPort.BaseStream.Write(data, 0, data.Length);
                 }
-                   // SerialPort.BaseStream.Write(data, 0, data.Length);
 
             }
             catch (Exception)
             {
-                Console.WriteLine("Except");
                 return false;
             }
 
             return true;
         }
 
+        
         private void DataReceivedHandler(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
         {
-            //string indata = sp.ReadExisting();
-
-            //int currentTime = timer.Elapsed.Milliseconds;
-
-            DateTime currentTimeCP = DateTime.Now;
 
             int size = SerialPort.BytesToRead;
             byte[] ReceiveBytes = new byte[size];
             SerialPort.Read(ReceiveBytes, 0, size);
 
-            //Debug.Write("/" + currentTimeCP.Millisecond + "/" + " Data Received:");
-            //Debug.WriteLine(temp);
-            //currentTab.parentWindow.connectionTabHelper.AddNewText(Color.FromRgb(0,0,0),temp);
-            currentTab.ShowData(ReceiveBytes, DateTime.Now);
+            currentTab.ShowData(ReceiveBytes, 0, size, DateTime.Now);
             toolBarSettings.ReceiveWindowTextUpdated = true;
-            //currentTab.ReceivePage.Dispatcher.InvokeAsync(()=> {currentTab.ReceivePage.Receive_Text.AppendText(String.Format("[{0}]{1}\n", currentTimeCP.ToString("MM/dd HH:mm:ss"), temp)); });
 
         }
 
@@ -227,6 +216,68 @@ namespace EasyCom.Connection.Serial
                         return false;
                 }
                 return true;
+            }
+        }
+
+        public void Read()
+        {
+            bool isTimeout = false;
+            int cursor = 0;
+            bool finish = true;
+            Stopwatch timeoutWatch = new Stopwatch();
+            byte[] ReceiveBytes = new byte[1000];
+            bool full = false;
+            int count = 0;
+
+            while (!cancellationTokenSource.Token.IsCancellationRequested)
+            {
+                try
+                {
+                    int size = SerialPort.BytesToRead;
+                    if (size != 0)
+                    {
+                        if (finish)
+                        {
+                            timeoutWatch.Restart();
+                            finish = false;
+                            cursor = 0;
+                        }
+                        if (cursor + size < ReceiveBytes.Length)
+                        {
+                            byte[] data = new byte[size];
+                            SerialPort.Read(data, 0, size);
+                            Buffer.BlockCopy(data, 0, ReceiveBytes, cursor, size);
+                            cursor += size;
+                            count += 1;
+                        }
+                        else
+                            full = true;
+                        
+                    }
+                    if (timeoutWatch.IsRunning && !finish||full)
+                    {
+                        
+                        timeoutWatch.Stop();
+                        long elapsed = timeoutWatch.ElapsedMilliseconds;
+                        if (timeoutWatch.ElapsedMilliseconds >= SerialPort.ReadTimeout || full)
+                        {
+                           
+                            count = 0;
+                            full = false;
+                            finish = true;
+                            currentTab.ShowData(ReceiveBytes, 0, cursor, DateTime.Now);
+                            toolBarSettings.ReceiveWindowTextUpdated = true;
+                        }
+                        else
+                        {
+                            timeoutWatch.Start();
+                        }
+                    }
+                }
+                catch (TimeoutException) {
+                    Console.WriteLine("timeout");
+                }
+                Thread.Sleep(1);
             }
         }
     }

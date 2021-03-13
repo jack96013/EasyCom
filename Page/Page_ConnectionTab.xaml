@@ -38,7 +38,7 @@
     <Grid Background="White">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="400" MinWidth="400" MaxWidth="600" Name="ToolBarColumn"/>
+            <ColumnDefinition Width="400" MinWidth="400" Name="ToolBarColumn"/>
         </Grid.ColumnDefinitions>
         <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Disabled">
             <Grid>
@@ -77,13 +77,14 @@
             <Frame Name="DialogHostFrame" Panel.ZIndex="1" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" NavigationUIVisibility="Hidden">
 
             </Frame>
-                <Grid x:Name="ToolBarMain" Background="{StaticResource MaterialDesignBackground}">
+            <Grid x:Name="ToolBarMain" Background="{StaticResource MaterialDesignBackground}">
                 <TabControl x:Name="TabControl_Tools" Grid.Column="1" Visibility="Visible" Padding="2">
                     <TabItem Header="多字串發送" Width="80">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="75*"/>
+                                <RowDefinition Height="119*"/>
                             </Grid.RowDefinitions>
                             <Grid Grid.Row="0">
                                 <Label Content="分類" HorizontalAlignment="Left" Margin="5,5,5,5"/>
@@ -102,7 +103,7 @@
 
                             </Grid>
 
-                            <ListBox Grid.Row="1" Margin="5" x:Name="ListBox_CustomStr">
+                            <ListBox Grid.Row="1" Margin="5" x:Name="ListBox_CustomStr" Grid.RowSpan="2">
                                 <ListBox.Resources>
                                     <Style x:Key="ListBoxItemStyle" TargetType="{x:Type ListBoxItem}">
                                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -114,7 +115,13 @@
 
                         </Grid>
                     </TabItem>
-                    <TabItem Header="圖表" Width="80"/>
+                    <TabItem Header="圖表" Width="80">
+                        <TabItem.Resources>
+                            <UserControl x:Key="aa"/>
+                        </TabItem.Resources>
+
+                        <ContentPresenter x:Name="Charts"/>
+                    </TabItem>
                     <TabItem Header="控制器" Width="80"/>
                 </TabControl>
             </Grid>

@@ -163,7 +163,6 @@ namespace EasyCom
             {
                 connectionTabHelper.CurrentTabData.AutoSendRobot.Start();
             }
-            setting.SendAutoSenderEnable = !enable;
             UpdateAutoSenderInfo(null,null);
         }
 
@@ -319,7 +318,7 @@ namespace EasyCom
                 if (a)
                     ConnectionTabHelper.CurrentTabData.Connect();
                 else
-                    Console.WriteLine("\nFail:");
+                    ;
             }
             
         }

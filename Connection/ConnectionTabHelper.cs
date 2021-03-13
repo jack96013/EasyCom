@@ -17,21 +17,22 @@ namespace EasyCom
         private Page_ConnectionTab receivePage;
         public Frame ReceivePageFrame { get; } = new Frame();
 
-        private MainWindow currentWindow;
+        private MainWindow parrentWindow;
 
         public List<ConnectionTabData> ConnectionTabDataList { get; } = new List<ConnectionTabData>();
 
         private TabItem TabItem_Add = new TabItem() { Header = "+", Width = 30 };
 
-        public DispatcherTimer ReceiveWindowRefreshTimer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(10) };
-        public ManualResetEvent ReceiveWindowRefreshLock = new ManualResetEvent(true);
-        public ManualResetEvent ReceiveWindowRefreshLock_Show = new ManualResetEvent(true);
+        private DispatcherTimer ReceiveWindowRefreshTimer { get; } = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(10) };
+        private ManualResetEvent ReceiveWindowRefreshLock { get; } = new ManualResetEvent(true);
+        private ManualResetEvent ReceiveWindowRefreshLock_Show { get; } = new ManualResetEvent(true);
 
         private bool autoNewTab = false;
 
         private int Count = 0;
         private TabItem previousSelectedTab = null;
 
+        //TODO: Combine SelectedTab and CurrentTabData
         public ConnectionTabData CurrentTabData
         {
 
@@ -44,19 +45,23 @@ namespace EasyCom
             }
         }
 
-        public Page_ConnectionTab ReceivePage { get => receivePage; set => receivePage = value; }
-        public MainWindow CurrentWindow { get => currentWindow; set => currentWindow = value; }
-        public bool AutoNewTab { get => autoNewTab; set => autoNewTab = value; }
         public ConnectionTabData SelectedTab
         {
-            get {
+            get
+            {
                 return (TabControl_ReceiveWindow.SelectedItem as ConnectionTabItem).ConnectionTabData;
-            } set
+            }
+            set
             {
                 TabControl_ReceiveWindow.SelectedItem = value.TabItem;
-
             }
         }
+
+
+        public Page_ConnectionTab ReceivePage { get => receivePage; set => receivePage = value; }
+        public MainWindow CurrentWindow { get => parrentWindow; set => parrentWindow = value; }
+        public bool AutoNewTab { get => autoNewTab; set => autoNewTab = value; }
+        
 
 
         public ConnectionTabHelper(MainWindow currentWindow)
@@ -74,6 +79,14 @@ namespace EasyCom
             ReceiveWindowRefreshTimer.Tick += ReceiveWindowRefreshTimer_Tick;
             ReceiveWindowRefreshTimer.Start();
             this.TabControl_ReceiveWindow.SelectionChanged += TabControl_ReceiveWindow_SelectionChanged;
+
+            parrentWindow.SizeChanged += ParrentWindow_SizeChanged;
+            
+        }
+
+        private void ParrentWindow_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
+        {
+            
         }
 
         private void ReceiveWindowRefreshTimer_Tick(object sender, EventArgs e)
@@ -90,6 +103,7 @@ namespace EasyCom
                     {
                         //ReceivePage.TextBox_Test.Text = CurrentTabData.toolBarSetting.ReceiveWindow_Text.ToString();
                         AddNewText(Color.FromArgb(0, 0, 0, 0), CurrentTabData.ToolBarSetting.ReceiveWindowText.ToString());
+                        
 
                         //ReceivePage.Receive_Text.Document = CurrentTabData.toolBarSetting.flowDocument;
                         CurrentTabData.ToolBarSetting.ReceiveWindowTextUpdated = false;
@@ -105,6 +119,11 @@ namespace EasyCom
                     ReceiveWindowRefreshLock_Show.Set();
                 }
             }
+        }
+
+        private void AddToChart(string text)
+        {
+        
         }
 
         public bool IsVerticalScrollBarAtBottom
@@ -138,7 +157,7 @@ namespace EasyCom
         {
             if (TabControl_ReceiveWindow.Items.Count == 1)
             {
-                this.currentWindow.Dispatcher.Invoke(() => { NewTabAndSelect(); });
+                this.parrentWindow.Dispatcher.Invoke(() => { NewTabAndSelect(); });
             }
         }
 
@@ -321,6 +340,7 @@ namespace EasyCom
             CurrentWindow.ComboBox_Connection_Type.SelectedItem = tabData.ConnectionType;
 
             receivePage.PopupDialogHostReceive.ReplaceDialog(toolBarSettings.PopupDialogReceive);
+            parrentWindow.UpdateAutoSenderInfo(null,null);
         }
 
         public void ShowDialogOnReceiveWindow(ConnectionTabData tab, PopupDialog dialog)
@@ -352,7 +372,7 @@ namespace EasyCom
             });
         }
 
-        //開始連線
+        
 
         
     }

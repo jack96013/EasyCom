@@ -42,6 +42,8 @@ namespace EasyCom
         private PageCustomStrBookmarkDialog dialogCustomStrBookmark = null;
         private List<ListBoxItem_CustomStr> CustomStrDisplayList = new List<ListBoxItem_CustomStr>();
 
+        public ChartsExample ChartsPage { get; set; }
+
 
         public Page_ConnectionTab(ConnectionTabHelper connectionTabHelper)
         {
@@ -71,7 +73,14 @@ namespace EasyCom
 
             customStrManager.OnLoadFinish = CustomStrLoadFinish;
             customStrManager.LoadCustomStrAsync();
-            this.Buttom_CustomStrBookMark.Click += Buttom_CustomStrBookMark_Click; ;
+            this.Buttom_CustomStrBookMark.Click += Buttom_CustomStrBookMark_Click;
+            this.Charts.Content = ChartsPage = new ChartsExample();
+            this.SizeChanged += Page_ConnectionTab_SizeChanged;
+        }
+
+        private void Page_ConnectionTab_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            this.ToolBarColumn.MaxWidth = this.ActualWidth * 0.7;
         }
 
         private void Buttom_CustomStrBookMark_Click(object sender, RoutedEventArgs e)

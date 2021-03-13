@@ -33,14 +33,14 @@ namespace EasyCom.Connection.Serial
         public List<ConnectionTabData> ComPortUsedTabList { get; } = new List<ConnectionTabData>(); //Save the comport be used by connection tabs
         public List<int> ComPortUsedList { get; } = new List<int>(); //Save the comport be used by connection tabs
 
-        public List<ComPortItem> ComPortList { get; set; } = new List<ComPortItem>();
+        private List<ComPortItem> ComPortList { get; set; } = new List<ComPortItem>();
 
         private static ManualResetEvent ProcessPortList = new ManualResetEvent(true);
 
 
         public delegate void SettingsOnChangedHandler();
         public event SettingsOnChangedHandler SettingsOnChange;
-        public int ComboBox_Baudrate_lastSelectedIndex;
+        private int ComboBox_Baudrate_lastSelectedIndex;
 
         public static Options SerialOptions { get; } = new Options();
 
@@ -128,13 +128,13 @@ namespace EasyCom.Connection.Serial
         {
             Task.Factory.StartNew(() =>
             {
-                Debug.WriteLine("list comport");
                 ProcessPortList.Reset();
+                
                 string[] SerialPortName = SerialPort.GetPortNames();
                 SerialPortName = SerialPortName.Distinct().ToArray();
                 //Array.Sort(SerialPortName);
                 List < object[] > serialportData = new List<object[]>();
-
+                //Filiter COM
                 Regex regex = new Regex(@"COM(\d+)(?=\D?)");
                 for (int k = 0; k < SerialPortName.Length; k++)
                 {
@@ -143,8 +143,9 @@ namespace EasyCom.Connection.Serial
                     {
                         serialportData.Add(new object[] {int.Parse(cmpResult.Groups[1].ToString(),CultureInfo.InvariantCulture), ""});
                     }
-                    
                 }
+
+                //Get serial port more detail from Management
                 List<ComPortItem> newPortList = new List<ComPortItem>();
                 var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_PnPEntity WHERE Caption like '%(COM%'");
                 //get all port detail
@@ -170,12 +171,13 @@ namespace EasyCom.Connection.Serial
                 }
                 newPortList.Sort((x, y) => { return x.ComID.CompareTo(y.ComID); });
 
+                //Check Connection
                 foreach (ConnectionTabData tab in ComPortUsedTabList)
                 {
                     SerialHelper serial = tab.ConnectionObject as SerialHelper;
                     if (serial != null)
                     {
-                        ComPortItem result = newPortList.Find((x) => string.Format("COM{0}", x.ComID) == serial.SerialPort.PortName);
+                        ComPortItem result = newPortList.Find((x) => ComIdToString(x.ComID) == serial.SerialPort.PortName);
                         if (result != null)
                         {
                             result.Used = true;
@@ -185,7 +187,6 @@ namespace EasyCom.Connection.Serial
                         {
                             //找不到，已被移除
                             this.Dispatcher.InvokeAsync(() => {
-                                Console.WriteLine(tab.TabItem.Title);
                                 tab.ConnectionObject.Close();
                                 ConnectionTabHelper tabHelper = mainWindow.ConnectionTabHelper;
                                 PageDialog dialog = new PageDialog
@@ -472,13 +473,18 @@ namespace EasyCom.Connection.Serial
                 SerialHelper serial = ((SerialHelper)data.ConnectionObject);
                 if (serial.Connected)
                 {
-                    ComPortItem result = ComPortList.Find(item => (string.Format("COM{0}", item.ComID) == serial.SerialPort.PortName)&item.Removed);
+                    ComPortItem result = ComPortList.Find(item => (ComIdToString(item.ComID) == serial.SerialPort.PortName)&item.Removed);
                     if (result != null)
                     {
                         serial.Close();
                     }
                 }
             }
+        }
+
+        public static string ComIdToString(int comID)
+        {
+            return string.Format(CultureInfo.InvariantCulture,"COM{0}", comID);
         }
 
         

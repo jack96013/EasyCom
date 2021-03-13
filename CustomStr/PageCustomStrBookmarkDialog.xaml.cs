@@ -290,7 +290,7 @@ namespace EasyCom.CustomStr
             ListBox_DragOver<StrItemModel>((ListBox)sender, e);
         }
 
-
+        //FIXME: When command drag to tab and drag back,tab indicator not recovered;
         private void ListBox_DragOver<TItem>(object sender, DragEventArgs e) where TItem : DragableListModelBase
         {
             ListBox listbox = (ListBox)sender;
@@ -321,6 +321,7 @@ namespace EasyCom.CustomStr
             }
             else
             {
+                Console.WriteLine("Clear Indi");
                 viewModel.LastSelectModel?.ClearIndicator();
                 viewModel.LastSelectModel = null;
                 return;
@@ -328,13 +329,14 @@ namespace EasyCom.CustomStr
 
             if (listBoxItem == null)
             {
+                Console.WriteLine("Clear Indi2");
                 viewModel.LastSelectModel?.ClearIndicator();
-                viewModel.LastSelectModel = null;
+                //viewModel.LastSelectModel = null;
                 return;
             }
 
             TItem target = (TItem)listBoxItem.Content;
-            DragableListModelBase source = e.Data.GetData(typeof(TItem)) as TItem;
+            DragableListModelBase source; //  = e.Data.GetData(typeof(TItem)) as TItem
             if (Type.GetType(e.Data.GetFormats()[0]).BaseType == typeof(DragableListModelBase))
             {
                 source = e.Data.GetData(e.Data.GetFormats()[0]) as DragableListModelBase;
@@ -357,13 +359,21 @@ namespace EasyCom.CustomStr
                 }
                 return;
             }
-            else if (true) //新選取的項目
+            else
             {
                 if (source.GetType() == target.GetType())
                 {
                     if (target != viewModel.LastSelectModel)
                     {
                         viewModel.LastSelectModel?.ClearIndicator();
+                        if (source.GetType() == typeof(StrItemModel))
+                        {
+                            Console.WriteLine("trig");
+                            TabItemModel lastModel = tabListBoxViewModel.LastSelectModel;
+                            Console.WriteLine(lastModel);
+                            if (lastModel != null)
+                                lastModel.MoveInIndicator = false;
+                        }
                     }
                     viewModel.LastSelectModel = target;
 
@@ -379,18 +389,19 @@ namespace EasyCom.CustomStr
                         target.DragIndicatorUp = true;
                     }
 
-                    if (source.GetType() == typeof(StrItemModel))
-                    {
-                        if (tabListBoxViewModel.LastSelectModel != null)
-                        {
-                            tabListBoxViewModel.LastSelectModel.MoveInIndicator = false;
-                        }
-                    }
+                    //if (source.GetType() == typeof(StrItemModel))
+                    //{
+                    //    if (tabListBoxViewModel.LastSelectModel != null)
+                    //    {
+                    //        tabListBoxViewModel.LastSelectModel.MoveInIndicator = false;
+                    //    }
+                    //}
 
                 }
                 //command move to other tab
                 else if (source.GetType() == typeof(StrItemModel) && target.GetType() == typeof(TabItemModel))
                 {
+                    
                     strListBoxViewModel.LastSelectModel?.ClearIndicator();
                     strListBoxViewModel.LastSelectModel = (StrItemModel)source;
 
@@ -400,11 +411,13 @@ namespace EasyCom.CustomStr
                     }
 
                     tabListBoxViewModel.LastSelectModel = (TabItemModel)(DragableListModelBase)target;
+                    Console.WriteLine("Move to other tab"+ tabListBoxViewModel.LastSelectModel.Data.Name);
                     tabListBoxViewModel.LastSelectModel.MoveInIndicator = true;
                 }
                 //tab move to other string (x)
                 else
                 {
+                    Console.WriteLine("X");
                     tabListBoxViewModel.LastSelectModel?.ClearIndicator();
                     tabListBoxViewModel.LastSelectModel = (TabItemModel)source;
                     e.Effects = DragDropEffects.None;

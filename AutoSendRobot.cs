@@ -24,14 +24,14 @@ namespace EasyCom
 
         public void Start()
         {
-            Console.WriteLine("start");
+            if (!Tab.Connected)
+                return;
             Tab.ToolBarSetting.SendAutoSenderEnable = true;
             Tab.ToolBarSetting.SendAutoSenderCurrentAmount = 0;
             if (task != null && !task.IsCompleted)
             {
                 Stop();
             }
-            Console.WriteLine("create");
             if (task != null)
             {
                 
@@ -41,11 +41,13 @@ namespace EasyCom
             
             CreateRobot();
             task.Start();
-            Console.WriteLine(task.Status);
+            Tab.ToolBarSetting.SendAutoSenderEnable = true;
+            
         }
         public void Stop()
         {
-            cancellationTokenSource.Cancel();
+            cancellationTokenSource?.Cancel();
+            Tab.ToolBarSetting.SendAutoSenderEnable = false;
         }
 
         public bool IsRunning()
@@ -57,14 +59,11 @@ namespace EasyCom
 
             cancellationTokenSource = new CancellationTokenSource();
             task = new Task(()=> {
-                Console.WriteLine("??S");
-                Console.WriteLine(cancellationTokenSource.Token.IsCancellationRequested);
                 while (!cancellationTokenSource.Token.IsCancellationRequested)
                 {
                     if (Tab.Connected)
                     {
                         bool successful = Tab.SendData(Tab.ToolBarSetting.SendText,DateTime.Now,false);
-                        Console.WriteLine(successful);
                         if (successful)
                         {
                             Tab.ToolBarSetting.SendAutoSenderCurrentAmount++;
@@ -97,7 +96,6 @@ namespace EasyCom
                 App.Current.Dispatcher.InvokeAsync(() => {
                     DataChanged?.Invoke(this, null);
                 });
-                Console.WriteLine("exit");
             });
         }
 

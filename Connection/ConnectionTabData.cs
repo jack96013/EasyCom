@@ -1,6 +1,7 @@
 ﻿
 using EasyCom.Connection;
 using EasyCom.Settings;
+using LiveCharts.Wpf;
 using System;
 using System.Diagnostics;
 using System.Globalization;
@@ -55,7 +56,7 @@ namespace EasyCom
             ToolBarSetting.ReceiveAutoSpilt = true;
             ToolBarSetting.ReceiveShowTime = true;
             ToolBarSetting.ReceiveLineEnding = mainWindowOption.LineEndingTypeList.ElementAt(1);
-            ToolBarSetting.ReceiveTimeOut = 20;
+            ToolBarSetting.ReceiveTimeOut = 30;
             ToolBarSetting.ReceiveEncodingType = mainWindowOption.EncodingTypeList.ElementAt(1);
 
             ToolBarSetting.SendLineEnding = mainWindowOption.LineEndingTypeList.ElementAt(0);
@@ -115,7 +116,8 @@ namespace EasyCom
         public bool SaveSettingFromAdvancedSettingPage()
         {
             bool a = SaveSettingFromAdvancedSettingPage(ToolBarSetting.ConnectionSettings);
-            //Console.WriteLine(((Connection.Serial.Settings)ToolBarSetting.ConnectionSettings).Info());
+            //
+            //iteLine(((Connection.Serial.Settings)ToolBarSetting.ConnectionSettings).Info());
             return a;
         }
         private bool SaveSettingFromAdvancedSettingPage(object setting)
@@ -260,18 +262,20 @@ namespace EasyCom
 
         }
 
-        public void ShowData(byte[] data, DateTime time)
+        public void ShowData(byte[] data,int start,int length , DateTime time)
         {
-            //String ConvertedData = Encoding.UTF8.GetString(data);
-
             string ConvertedData;
             if (ToolBarSetting.ReceiveEncodingType.Name == "HEX")
             {
-                ConvertedData = BitConverter.ToString(data).Replace("-", " ");
+                ConvertedData = BitConverter.ToString(data,start,length).Replace("-", " ");
             }
             else
-                ConvertedData = ToolBarSetting.ReceiveEncodingType.Value.GetString(data);
+                ConvertedData = ToolBarSetting.ReceiveEncodingType.Value.GetString(data,start,length);
             AppendTextToReceiveWindow(true, ConvertedData, time);
+
+            bool result = float.TryParse(ConvertedData, out float value);
+            if (result)
+                tabHelper.ReceivePage.ChartsPage.SeriesCollection[0].Values.Add(value);
 
         }
 
@@ -340,7 +344,6 @@ namespace EasyCom
                 else if (i % 3 ==0)
                 {
                     string hexValue = hex.Substring(i, 2);
-                    Console.WriteLine(hexValue);
                     Match match = Regex.Match(hexValue, "^[A-Fa-f0-9]+$");
                     if (match.Success)
                     {
@@ -359,7 +362,6 @@ namespace EasyCom
 
         public void SendFile()
         {
-            Console.WriteLine(ToolBarSetting.SendPath);
             if (ConnectionObject == null || !ConnectionObject.Connected)
             {
                 return;
@@ -408,7 +410,6 @@ namespace EasyCom
                         {
                             lenSplitCur += lenSplit;
                             percent++;
-                            Console.WriteLine(percent);
                             AppendTextToReceiveWindow(false, string.Format(CultureInfo.InvariantCulture, "檔案發送 {0}%", percent),DateTime.Now);
                             ToolBarSetting.ReceiveWindowTextUpdated = true;
 
@@ -424,7 +425,6 @@ namespace EasyCom
                     AppendTextToReceiveWindow(false, string.Format(CultureInfo.InvariantCulture, "發送完成! 共耗時 {0}", DateTime.Now.Subtract(startTime).ToString()), DateTime.Now);
                     
                 }
-                Console.WriteLine("finish\n");
             },CancellationToken.None, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default);
         }
 
