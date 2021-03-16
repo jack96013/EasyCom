@@ -218,7 +218,7 @@ namespace EasyCom.Connection.Serial
                 return true;
             }
         }
-
+        //For test
         public void Read()
         {
             bool isTimeout = false;
